@@ -386,10 +386,16 @@ class syncBackend {
    * @return STR dialog
    */
   public function dlgAbout() {
+  	/**
+  	 *	Aldus: 2014-10-31
+  	 *	Patch for missing info.txt - file_get_contents will throw a warning. 
+  	 */
+  	$info_file = LEPTON_PATH.'/modules/'.basename(dirname(__FILE__)).'/info.txt';
+  	$release_notes = file_exists( $info_file ) ? file_get_contents( $info_file ) : "-";
   	$data = array(
-  		'version'					=> sprintf('%01.2f', $this->getVersion()),
-  		'img_url'					=> $this->img_url.'/sync_data_logo.png',
-  		'release_notes'		=> file_get_contents(LEPTON_PATH.'/modules/'.basename(dirname(__FILE__)).'/info.txt'),
+  		'version'		=> sprintf('%01.2f', $this->getVersion()),
+  		'img_url'		=> $this->img_url.'/sync_data_logo.png',
+  		'release_notes'	=> $release_notes
   	);
   	return $this->getTemplate('backend.about.lte', $data);
   } // dlgAbout()
