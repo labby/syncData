@@ -42,9 +42,9 @@ if (file_exists(LEPTON_PATH.'/modules/pclzip/pclzip.lib.php')) {
   // LEPTON 1.x
 	require_once LEPTON_PATH.'/modules/pclzip/pclzip.lib.php';
 }
-elseif (file_exists(LEPTON_PATH.'/modules/lib_pclzip/pclzip.lib.php')) {
+elseif (file_exists(LEPTON_PATH.'/modules/lib_lepton/pclzip/pclzip.lib.php')) {
   // LEPTON 2.x
-	require_once LEPTON_PATH.'/modules/lib_pclzip/pclzip.lib.php';
+	require_once LEPTON_PATH.'/modules/lib_lepton/pclzip/pclzip.lib.php';
 }
 elseif (file_exists(LEPTON_PATH.'/include/pclzip/pclzip.lib.php')) {
   // WebsiteBaker
