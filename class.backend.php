@@ -391,10 +391,10 @@ class syncBackend {
   	 *	Patch for missing info.txt - file_get_contents will throw a warning. 
   	 */
   	$info_file = LEPTON_PATH.'/modules/'.basename(dirname(__FILE__)).'/info.txt';
-  	$release_notes = file_exists( $info_file ) ? file_get_contents( $info_file ) : "-";
+  	$release_notes = file_exists( $info_file ) ? file_get_contents( $info_file ) : "";
   	$data = array(
   		'version'		=> sprintf('%01.2f', $this->getVersion()),
-  		'img_url'		=> $this->img_url.'/sync_data_logo.png',
+  		'img_url'		=> $this->img_url.'/sync_data_logo.jpg',
   		'release_notes'	=> $release_notes
   	);
   	return $this->getTemplate('backend.about.lte', $data);
