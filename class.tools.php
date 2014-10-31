@@ -1,25 +1,34 @@
 <?php
 
 /**
- * kitTools
- * 
- * @author Ralf Hertsch (ralf.hertsch@phpmanufaktur.de)
- * @link http://phpmanufaktur.de
- * @copyright 2011
- * @license GNU GPL (http://www.gnu.org/licenses/gpl.html)
- * @version $Id$
- * 
- * THIS SPECIAL VERSION IS BASED ON KITTOOLS RELEASE 0.15!
+ *  @module         syncData
+ *  @version        see info.php of this module
+ *  @authors        Ralf Hertsch (†), cms-lab
+ *  @copyright      2011 - 2012 Ralf Hertsch (†)
+ *  @copyright      2013-2014 cms-lab 
+ *  @license        GNU GPL (http://www.gnu.org/licenses/gpl.html)
+ *  @license terms  see info.php of this module
+ *
  */
 
-// include LEPTON class.secure.php to protect this file and the whole CMS!
-$class_secure = '../../framework/class.secure.php';
-if (file_exists($class_secure)) {
-	include($class_secure);
+// include class.secure.php to protect this file and the whole CMS!
+if (defined('LEPTON_PATH')) {	
+	include(LEPTON_PATH.'/framework/class.secure.php'); 
+} else {
+	$oneback = "../";
+	$root = $oneback;
+	$level = 1;
+	while (($level < 10) && (!file_exists($root.'/framework/class.secure.php'))) {
+		$root .= $oneback;
+		$level += 1;
+	}
+	if (file_exists($root.'/framework/class.secure.php')) { 
+		include($root.'/framework/class.secure.php'); 
+	} else {
+		trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
+	}
 }
-else {
-	trigger_error(sprintf("[ <b>%s</b> ] Can't include LEPTON class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
-}
+// end include class.secure.php
 
 class kitToolsLibrary {
 	
@@ -68,7 +77,7 @@ class kitToolsLibrary {
    */
   public function getVersion() {
     // read info.php into array
-    $info_text = file(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/info.php');
+    $info_text = file(LEPTON_PATH.'/modules/'.basename(dirname(__FILE__)).'/info.php');
     if ($info_text == false) {
       return -1; }
     // walk through array
@@ -247,7 +256,7 @@ class kitToolsLibrary {
    * @return STR
    */
   public function getMediaPath() {
-  	$result = $this->addSlash(WB_PATH) . $this->removeLeadingSlash($this->addSlash(MEDIA_DIRECTORY));
+  	$result = $this->addSlash(LEPTON_PATH) . $this->removeLeadingSlash($this->addSlash(MEDIA_DIRECTORY));
   	return $result;
   }
 
@@ -275,7 +284,7 @@ class kitToolsLibrary {
     elseif ($sql_result->numRows() > 0) {
       // alles OK, Daten uebernehmen
       $thisArr = $sql_result->fetchRow() ;
-      if(is_file(WB_PATH . $settings['pages_directory'] . $thisArr['link'] . $settings['page_extension'])) {
+      if(is_file(LEPTON_PATH . $settings['pages_directory'] . $thisArr['link'] . $settings['page_extension'])) {
         // $fileName = basename($thisArr['link'] . $settings['page_extension']);
         $fileName = $this->removeLeadingSlash($thisArr['link'] . $settings['page_extension']);
         return true ; }
@@ -304,14 +313,14 @@ class kitToolsLibrary {
   		// es handelt sich um eine TOPICS Seite
   		$SQL = sprintf("SELECT link FROM %smod_topics WHERE topic_id='%d'", TABLE_PREFIX, TOPIC_ID);
   		if (false !== ($link = $database->get_one($SQL))) {
-  			$url = WB_URL.PAGES_DIRECTORY.'/topics/'.$link.PAGE_EXTENSION;
+  			$url = LEPTON_URL.PAGES_DIRECTORY.'/topics/'.$link.PAGE_EXTENSION;
   		}
   		else {
   			return false;
   		} 		
   	}
     elseif ($this->getFileNameByPageID($pageID, $url)) {
-    	$url = WB_URL.PAGES_DIRECTORY.'/'.$url;
+    	$url = LEPTON_URL.PAGES_DIRECTORY.'/'.$url;
     }
     else {
     	return false;
@@ -534,7 +543,7 @@ class kitToolsLibrary {
 	/**
 	 * Find files at the $location with the extension $fileregex
 	 * and return them as array
-	 * Expl.: findfile(WB_PATH, $fileregex='/\.(php|inc)$/')
+	 * Expl.: findfile(LEPTON_PATH, $fileregex='/\.(php|inc)$/')
 	 * returns all files with extension *.php and *.inc
 	 *
 	 * @param STR $location

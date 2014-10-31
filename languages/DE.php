@@ -1,13 +1,34 @@
 <?php
+
 /**
- * syncData
+ *  @module         syncData
+ *  @version        see info.php of this module
+ *  @authors        Ralf Hertsch (†), cms-lab
+ *  @copyright      2011 - 2012 Ralf Hertsch (†)
+ *  @copyright      2013-2014 cms-lab 
+ *  @license        GNU GPL (http://www.gnu.org/licenses/gpl.html)
+ *  @license terms  see info.php of this module
  *
- * @author Ralf Hertsch (ralf.hertsch@phpmanufaktur.de)
- * @link http://phpmanufaktur.de
- * @copyright 2011
- * @license GNU GPL (http://www.gnu.org/licenses/gpl.html)
- * @version $Id$
  */
+
+// include class.secure.php to protect this file and the whole CMS!
+if (defined('LEPTON_PATH')) {	
+	include(LEPTON_PATH.'/framework/class.secure.php'); 
+} else {
+	$oneback = "../";
+	$root = $oneback;
+	$level = 1;
+	while (($level < 10) && (!file_exists($root.'/framework/class.secure.php'))) {
+		$root .= $oneback;
+		$level += 1;
+	}
+	if (file_exists($root.'/framework/class.secure.php')) { 
+		include($root.'/framework/class.secure.php'); 
+	} else {
+		trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
+	}
+}
+// end include class.secure.php
 
 define('sync_btn_abort',												'Abbruch');
 define('sync_btn_ok',														'Übernehmen');
@@ -142,15 +163,15 @@ define('sync_label_restore_mode_binary',				'geänderte Tabellen und Dateien ers
 define('sync_label_restore_mode_replace_all',		'alle Tabellen und Dateien ersetzen');
 define('sync_label_restore_replace',						'Suchen & Ersetzen');
 define('sync_label_restore_replace_prefix',			'TABLE_PREFIX in MySQL Tabellen aktualisieren');
-define('sync_label_restore_replace_url',				'WB_URL in MySQL Tabellen aktualisieren');
+define('sync_label_restore_replace_url',				'LEPTON_URL in MySQL Tabellen aktualisieren');
 define('sync_label_restore_select',							'Rücksicherung auswählen');
 define('sync_label_status',											'Status');
 define('sync_label_tables',											'MySQL Tabellen');
 define('sync_label_timestamp',									'Zeitstempel');
 define('sync_label_total_files',								'Dateien insgesamt');
 define('sync_label_total_size',									'Größe insgesamt');
-define('sync_label_wb_path',										'WB_PATH');
-define('sync_label_wb_url',											'WB_URL');
+define('sync_label_LEPTON_PATH',										'LEPTON_PATH');
+define('sync_label_LEPTON_URL',											'LEPTON_URL');
 
 define('sync_msg_auto_exec_msec',								'<p style="color:red;"><em>AutoExec ist aktiv, der Vorgang wird in %d Millisekunden automatisch fortgesetzt.</em></p>');
 define('sync_msg_backup_finished',							'<p>Die Datensicherung wurde erfolgreich abgeschlossen.</p><p>Es wurden <b>%s</b> Dateien mit einem Umfang von <b>%s</b> gesichert.</p><p>Sie finden das vollständige Archiv unter:<br /><a href="%s">%s</a>.');

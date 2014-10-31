@@ -1,16 +1,16 @@
 //:client interface for syncData
-//:Please visit http://phpManufaktur.de for informations about kitForm!
 /**
- * syncData
- * 
- * @author Ralf Hertsch (ralf.hertsch@phpmanufaktur.de)
- * @link http://phpmanufaktur.de
- * @copyright 2011
- * @license GNU GPL (http://www.gnu.org/licenses/gpl.html)
- * @version $Id$
+ *  @module         syncData
+ *  @version        see info.php of this module
+ *  @authors        Ralf Hertsch (†), cms-lab
+ *  @copyright      2011 - 2012 Ralf Hertsch (†)
+ *  @copyright      2013-2014 cms-lab 
+ *  @license        GNU GPL (http://www.gnu.org/licenses/gpl.html)
+ *  @license terms  see info.php of this module
+ *
  */
-if (file_exists(WB_PATH.'/modules/sync_data/class.synchronize.php')) {
-	require_once(WB_PATH.'/modules/sync_data/class.synchronize.php');
+if (file_exists(LEPTON_PATH.'/modules/sync_data/class.synchronize.php')) {
+	require_once(LEPTON_PATH.'/modules/sync_data/class.synchronize.php');
 	$client = new syncClient();
 	$params = $client->getParams();
 	$params[syncClient::param_preset] = (isset($preset)) ? (int) $preset : 1;

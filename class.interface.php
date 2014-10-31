@@ -1,25 +1,34 @@
 <?php
 
 /**
- * syncData
- * 
- * @author Ralf Hertsch (ralf.hertsch@phpmanufaktur.de)
- * @link http://phpmanufaktur.de
- * @copyright 2011
- * @license GNU GPL (http://www.gnu.org/licenses/gpl.html)
- * @version $Id$
- * 
- * FOR VERSION- AND RELEASE NOTES PLEASE LOOK AT INFO.TXT!
+ *  @module         syncData
+ *  @version        see info.php of this module
+ *  @authors        Ralf Hertsch (†), cms-lab
+ *  @copyright      2011 - 2012 Ralf Hertsch (†)
+ *  @copyright      2013-2014 cms-lab 
+ *  @license        GNU GPL (http://www.gnu.org/licenses/gpl.html)
+ *  @license terms  see info.php of this module
+ *
  */
 
-// include LEPTON class.secure.php to protect this file and the whole CMS!
-$class_secure = '../../framework/class.secure.php';
-if (file_exists($class_secure)) {
-	include($class_secure);
+// include class.secure.php to protect this file and the whole CMS!
+if (defined('LEPTON_PATH')) {	
+	include(LEPTON_PATH.'/framework/class.secure.php'); 
+} else {
+	$oneback = "../";
+	$root = $oneback;
+	$level = 1;
+	while (($level < 10) && (!file_exists($root.'/framework/class.secure.php'))) {
+		$root .= $oneback;
+		$level += 1;
+	}
+	if (file_exists($root.'/framework/class.secure.php')) { 
+		include($root.'/framework/class.secure.php'); 
+	} else {
+		trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
+	}
 }
-else {
-	trigger_error(sprintf("[ <b>%s</b> ] Can't include LEPTON class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
-}
+// end include class.secure.php
 
 global $dbSyncDataCfg;
 if (!is_object($dbSyncDataCfg)) $dbSyncDataCfg = new dbSyncDataCfg();
@@ -42,8 +51,8 @@ if (!is_object($interface)) $interface = new syncDataInterface();
 
 class syncDataInterface {
 	
-	const used_wb_url									= 'used_wb_url';
-	const used_wb_path								= 'used_wb_path';
+	const used_LEPTON_URL									= 'used_LEPTON_URL';
+	const used_LEPTON_PATH								= 'used_LEPTON_PATH';
 	const used_table_prefix						= 'used_table_prefix';
 	
 	const total_files									= 'total_files';
@@ -71,7 +80,7 @@ class syncDataInterface {
 	public function __construct() {
 		global $dbSyncDataCfg;
 		$this->script_start = microtime(true);
-		$this->temp_path = WB_PATH.'/temp/sync_data/';
+		$this->temp_path = LEPTON_PATH.'/temp/sync_data/';
 		if (!file_exists($this->temp_path)) mkdir($this->temp_path, 0755, true);
 		$this->restore_path = $this->temp_path.'restore/';
 		if (!file_exists($this->restore_path)) mkdir($this->restore_path, 0755, true);
@@ -80,7 +89,7 @@ class syncDataInterface {
 		$this->max_execution_time = $dbSyncDataCfg->getValue(dbSyncDataCfg::cfgMaxExecutionTime);
 		set_time_limit($this->max_execution_time);
 		$this->limit_execution_time = $dbSyncDataCfg->getValue(dbSyncDataCfg::cfgLimitExecutionTime);	 
-		$this->backup_path = WB_PATH.MEDIA_DIRECTORY.'/sync_data/backup/';
+		$this->backup_path = LEPTON_PATH.MEDIA_DIRECTORY.'/sync_data/backup/';
 	} // __construct()
 	
 	/**
@@ -756,8 +765,8 @@ class syncDataInterface {
 		
 		// Informationen ueber das Backup in der sync_data.ini festhalten
 		$ini = $job;
-		$ini[self::used_wb_path] = WB_PATH;
-		$ini[self::used_wb_url] = WB_URL;
+		$ini[self::used_LEPTON_PATH] = LEPTON_PATH;
+		$ini[self::used_LEPTON_URL] = LEPTON_URL;
 		$ini[self::used_table_prefix] = TABLE_PREFIX;
 		$ini[self::total_files] = $files[0][sprintf('COUNT(%s)', dbSyncDataFiles::field_file_name)];
 		$ini[self::total_size] = $files[0][sprintf('SUM(%s)', dbSyncDataFiles::field_file_size)];
@@ -864,7 +873,7 @@ class syncDataInterface {
 		
 		if ($running) {
 			// on first call create file_list and store it at /temp directory
-			$path = $this->directoryTree(WB_PATH);
+			$path = $this->directoryTree(LEPTON_PATH);
 			$fp = fopen($this->temp_path.self::file_list, 'w');
 			foreach($path as $values) fputs($fp, $values."\n");
 			fclose($fp); 			
@@ -876,7 +885,7 @@ class syncDataInterface {
 		$ig_dir = $dbSyncDataCfg->getValue(dbSyncDataCfg::cfgIgnoreDirectories);
 		$ig_dir = explode("\n", $ig_dir);
 		$ignore_directories = array();
-		foreach ($ig_dir as $id) $ignore_directories[] = WB_PATH.$id;
+		foreach ($ig_dir as $id) $ignore_directories[] = LEPTON_PATH.$id;
 		$ignore_extensions = $dbSyncDataCfg->getValue(dbSyncDataCfg::cfgIgnoreFileExtensions);
 		
 		for ($i=0; $i < $max; $i++) {
@@ -908,7 +917,7 @@ class syncDataInterface {
 						dbSyncDataFiles::field_file_checksum	=> 0,
 						dbSyncDataFiles::field_file_date			=> '0000-00-00 00:00:00',
 						dbSyncDataFiles::field_file_name			=> basename($file),
-						dbSyncDataFiles::field_file_path			=> str_replace(WB_PATH, '', $file),
+						dbSyncDataFiles::field_file_path			=> str_replace(LEPTON_PATH, '', $file),
 						dbSyncDataFiles::field_file_type			=> dbSyncDataFiles::file_type_file,
 						dbSyncDataFiles::field_file_size			=> 0,
 						dbSyncDataFiles::field_status					=> dbSyncDataFiles::status_ok,
@@ -928,7 +937,7 @@ class syncDataInterface {
 				
       $data = array();
       $list = array();
-      if (0 == ($list = $zip->add($file, PCLZIP_OPT_ADD_PATH, 'files', PCLZIP_OPT_REMOVE_PATH, WB_PATH))) {
+      if (0 == ($list = $zip->add($file, PCLZIP_OPT_ADD_PATH, 'files', PCLZIP_OPT_REMOVE_PATH, LEPTON_PATH))) {
 				// Fehler beim Hinzufuegen der Datei
 				$data = array(
 					dbSyncDataFiles::field_action					=> dbSyncDataFiles::action_add,
@@ -937,7 +946,7 @@ class syncDataInterface {
 					dbSyncDataFiles::field_file_checksum	=> 0,
 					dbSyncDataFiles::field_file_date			=> '0000-00-00 00:00:00',
 					dbSyncDataFiles::field_file_name			=> basename($file),
-					dbSyncDataFiles::field_file_path			=> str_replace(WB_PATH, '', $file),
+					dbSyncDataFiles::field_file_path			=> str_replace(LEPTON_PATH, '', $file),
 					dbSyncDataFiles::field_file_type			=> dbSyncDataFiles::file_type_file,
 					dbSyncDataFiles::field_file_size			=> 0,
 					dbSyncDataFiles::field_status					=> dbSyncDataFiles::status_error,
@@ -952,7 +961,7 @@ class syncDataInterface {
 					dbSyncDataFiles::field_file_checksum	=> dechex($list[0]['crc']),
 					dbSyncDataFiles::field_file_date			=> date('Y-m-d H:i:s', $list[0]['mtime']),
 					dbSyncDataFiles::field_file_name			=> basename($file),
-					dbSyncDataFiles::field_file_path			=> str_replace(WB_PATH, '', $file),
+					dbSyncDataFiles::field_file_path			=> str_replace(LEPTON_PATH, '', $file),
 					dbSyncDataFiles::field_file_type			=> dbSyncDataFiles::file_type_file,
 					dbSyncDataFiles::field_file_size			=> $list[0]['size'],
 					dbSyncDataFiles::field_status					=> dbSyncDataFiles::status_ok,
@@ -982,7 +991,7 @@ class syncDataInterface {
 		// Restore vorbereiten
   	if (!file_exists($this->temp_path)) {
   		if (!mkdir($this->temp_path, 0755, true)) {
-  			$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, sprintf(sync_error_mkdir, str_replace(WB_PATH, '', $this->temp_path))));
+  			$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, sprintf(sync_error_mkdir, str_replace(LEPTON_PATH, '', $this->temp_path))));
   			return false;
   		}
   	}
@@ -994,7 +1003,7 @@ class syncDataInterface {
 		}
   	
   	// ZIP initialisieren und Dateiliste auslesen
-  	$zip = new PclZip(WB_PATH.$backup_archive);
+  	$zip = new PclZip(LEPTON_PATH.$backup_archive);
   	$list = array();
   	if (0 == ($list = $zip->listContent())) {
   		$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $zip->errorInfo(true)));
@@ -1022,7 +1031,7 @@ class syncDataInterface {
   	}
   	
   	if (false === ($sync_data_ini = parse_ini_file($this->temp_path.self::sync_data_ini, true))) {
-  		$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, sprintf(sync_error_file_read, str_replace(WB_PATH, '', $this->temp_path.self::sync_data_ini))));
+  		$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, sprintf(sync_error_file_read, str_replace(LEPTON_PATH, '', $this->temp_path.self::sync_data_ini))));
   		return false;
   	}
   	return true;
@@ -1034,7 +1043,7 @@ class syncDataInterface {
 	 * 
 	 * @param STR $backup_archive - name of the used archive *.zip file
 	 * @param BOOL $replace_prefix - replace TABLE_PREFIX?
-	 * @param BOOL $replace_url - replace WB_URL?
+	 * @param BOOL $replace_url - replace LEPTON_URL?
 	 * @param INT $restore_type - type of restoring: complete, MySQL only or Files only
 	 * @param INT $restore_mode - mode of restoring: overwrite all, date & time compare or binary compare
 	 * @param BOOL $ignore_config - skip config.php 
@@ -1056,7 +1065,7 @@ class syncDataInterface {
   	}
   	// sync_data.ini auslesen
   	if (false === ($ini_data = parse_ini_file($this->temp_path.self::sync_data_ini, true))) {
-  		$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, sprintf(sync_error_file_read, str_replace(WB_PATH, '', $this->temp_path.self::sync_data_ini))));
+  		$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, sprintf(sync_error_file_read, str_replace(LEPTON_PATH, '', $this->temp_path.self::sync_data_ini))));
   		return false;
   	}
   	// neuen JOB fuer den Restore anlegen
@@ -1082,7 +1091,7 @@ class syncDataInterface {
   		dbSyncDataJobs::field_next_action						=> $next_action,
   		dbSyncDataJobs::field_next_file							=> '',
   		dbSyncDataJobs::field_replace_table_prefix	=> $replace_prefix ? 1 : 0,
-  		dbSyncDataJobs::field_replace_wb_url				=> $replace_url ? 1 : 0,
+  		dbSyncDataJobs::field_replace_LEPTON_URL				=> $replace_url ? 1 : 0,
   		dbSyncDataJobs::field_restore_mode					=> $restore_mode,
   		dbSyncDataJobs::field_start									=> date('Y-m-d H:i:s'),
   		dbSyncDataJobs::field_status								=> dbSyncDataJobs::status_start,
@@ -1255,12 +1264,12 @@ class syncDataInterface {
   	}
   	// sync_data.ini auslesen
   	if (false === ($ini_data = parse_ini_file($this->temp_path.self::sync_data_ini, true))) {
-  		$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, sprintf(sync_error_file_read, str_replace(WB_PATH, '', $this->temp_path.self::sync_data_ini))));
+  		$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, sprintf(sync_error_file_read, str_replace(LEPTON_PATH, '', $this->temp_path.self::sync_data_ini))));
   		return false;
   	}
  	  
   	// ZIP initialisieren
-  	$zip = new PclZip(WB_PATH.$job[dbSyncDataJobs::field_archive_file]);
+  	$zip = new PclZip(LEPTON_PATH.$job[dbSyncDataJobs::field_archive_file]);
 		$running = (empty($job[dbSyncDataJobs::field_next_file])) ? true : false;
 
 		// zu ignorierende Tabellen in ein Array schreiben
@@ -1383,16 +1392,16 @@ class syncDataInterface {
   		}
   			
   		if ((($job[dbSyncDataJobs::field_replace_table_prefix] == 1) && ($ini_data[syncDataInterface::section_general][self::used_table_prefix] != TABLE_PREFIX)) ||
-  				(($job[dbSyncDataJobs::field_replace_wb_url] == 1) && ($ini_data[syncDataInterface::section_general][self::used_wb_url] != WB_URL))) {
-  			// TABLE_PREFIX und/oder WB_URL muessen geaendert werden, Tabelle temporaer schreiben und aktualisieren
+  				(($job[dbSyncDataJobs::field_replace_LEPTON_URL] == 1) && ($ini_data[syncDataInterface::section_general][self::used_LEPTON_URL] != LEPTON_URL))) {
+  			// TABLE_PREFIX und/oder LEPTON_URL muessen geaendert werden, Tabelle temporaer schreiben und aktualisieren
   			$sql_file = file_get_contents($kitTools->correctBackslashToSlash($this->restore_path.$table['filename']));
  				if ($job[dbSyncDataJobs::field_replace_table_prefix] == 1) {
   				// TABLE_PREFIX muss geaendert werden
   				$sql_file = str_replace($restore_table_name, $replace_table_name, $sql_file);
   			}
-  			if ($job[dbSyncDataJobs::field_replace_wb_url] == 1) {
-  				// WB_URL muss geaendert werden
-  				$sql_file = str_replace($ini_data[syncDataInterface::section_general][self::used_wb_url], WB_URL, $sql_file);
+  			if ($job[dbSyncDataJobs::field_replace_LEPTON_URL] == 1) {
+  				// LEPTON_URL muss geaendert werden
+  				$sql_file = str_replace($ini_data[syncDataInterface::section_general][self::used_LEPTON_URL], LEPTON_URL, $sql_file);
   			}
  				file_put_contents($this->restore_path.$table['filename'], $sql_file);
   		}
@@ -1497,40 +1506,40 @@ class syncDataInterface {
   	}
   	// sync_data.ini auslesen
   	if (false === ($ini_data = parse_ini_file($this->temp_path.self::sync_data_ini, true))) {
-  		$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, sprintf(sync_error_file_read, str_replace(WB_PATH, '', $this->temp_path.self::sync_data_ini))));
+  		$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, sprintf(sync_error_file_read, str_replace(LEPTON_PATH, '', $this->temp_path.self::sync_data_ini))));
   		return false;
   	}
  	
   	// ZIP initialisieren
-  	$zip = new PclZip(WB_PATH.$job[dbSyncDataJobs::field_archive_file]);
+  	$zip = new PclZip(LEPTON_PATH.$job[dbSyncDataJobs::field_archive_file]);
   	
   	$running = (empty($job[dbSyncDataJobs::field_next_file])) ? true : false;
 		
   	$ig_dir = $dbSyncDataCfg->getValue(dbSyncDataCfg::cfgIgnoreDirectories);
 		$ig_dir = explode("\n", $ig_dir);
 		$ignore_directories = array();
-		foreach ($ig_dir as $id) $ignore_directories[] = WB_PATH.$id;
+		foreach ($ig_dir as $id) $ignore_directories[] = LEPTON_PATH.$id;
 		$ignore_extensions = $dbSyncDataCfg->getValue(dbSyncDataCfg::cfgIgnoreFileExtensions);
 		
 		if ($running && ($job[dbSyncDataJobs::field_delete_files] == 1)) {
 			// check if files should be deleted
-			$files = $this->directoryTree(WB_PATH);
+			$files = $this->directoryTree(LEPTON_PATH);
 			$check_files = array();
 			foreach ($restore_info as $file) {
 				if (strpos($file['filename'], 'files/') != 0) continue;
 				$check_files[] = substr($file['filename'], strlen('files/'));
 			}
 			foreach ($files as $file) {
-				$filename = substr($file, strlen(WB_PATH)+1);
+				$filename = substr($file, strlen(LEPTON_PATH)+1);
 				foreach ($ignore_directories as $ig_dir) {
-					if (strpos(WB_PATH.'/'.$filename, $ig_dir) !== false) continue 2; // continue with the next file in the for loop!
+					if (strpos(LEPTON_PATH.'/'.$filename, $ig_dir) !== false) continue 2; // continue with the next file in the for loop!
 				}		
 				// pruefen ob es sich um eine ignorierte Dateiendung handelt
 				$ext = pathinfo($filename, PATHINFO_EXTENSION);
 				if (in_array($ext, $ignore_extensions)) continue; 
 				if (!in_array($filename, $check_files)) {
 					// delete file
-					if (!unlink(WB_PATH.'/'.$filename)) {
+					if (!unlink(LEPTON_PATH.'/'.$filename)) {
 						$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, sprintf(sync_error_file_delete, $filename)));
 	  				$dbSyncDataProtocol->addEntry($job[dbSyncDataJobs::field_archive_id], 
 			  																	$job[dbSyncDataJobs::field_archive_number], 
@@ -1557,7 +1566,7 @@ class syncDataInterface {
 		if ($running && isset($ini_data[self::section_deleted_files])) {
 			// check for files which should be deleted by sync_data.ini command
 			foreach ($ini_data[self::section_deleted_files] as $file) {
-				$delete_file = WB_PATH.$file;
+				$delete_file = LEPTON_PATH.$file;
 				if (file_exists($delete_file)) {
 					// delete file
 					if (!unlink($delete_file)) {
@@ -1606,7 +1615,7 @@ class syncDataInterface {
 			}
 			// directory to ignore?
 			foreach ($ignore_directories as $ig_dir) {
- 				if (strpos(WB_PATH.'/'.$filename, $ig_dir) !== false) continue 2; // continue with the next file in the for loop!
+ 				if (strpos(LEPTON_PATH.'/'.$filename, $ig_dir) !== false) continue 2; // continue with the next file in the for loop!
 			}		
 			
 			// pruefen ob es sich um eine ignorierte Dateiendung handelt
@@ -1619,9 +1628,9 @@ class syncDataInterface {
 			// ignore .htaccess?
 			if (($filename == '.htaccess') && ($job[dbSyncDataJobs::field_ignore_htaccess] == 1)) continue;
 			
-			if (($job[dbSyncDataJobs::field_restore_mode] == dbSyncDataJobs::mode_replace_all) || !file_exists(WB_PATH.'/'.$filename)) {
+			if (($job[dbSyncDataJobs::field_restore_mode] == dbSyncDataJobs::mode_replace_all) || !file_exists(LEPTON_PATH.'/'.$filename)) {
 				// file does not exists or all files should be overwritten
-				if (false ===($list = $zip->extractByIndex($file['index'], PCLZIP_OPT_ADD_PATH, WB_PATH.'/', PCLZIP_OPT_REMOVE_PATH, 'files/', PCLZIP_OPT_REPLACE_NEWER))) {
+				if (false ===($list = $zip->extractByIndex($file['index'], PCLZIP_OPT_ADD_PATH, LEPTON_PATH.'/', PCLZIP_OPT_REMOVE_PATH, 'files/', PCLZIP_OPT_REPLACE_NEWER))) {
 					$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $zip->errorInfo(true)));
 					$dbSyncDataProtocol->addEntry($job[dbSyncDataJobs::field_archive_id], 
 			  																$job[dbSyncDataJobs::field_archive_number], 
@@ -1644,7 +1653,7 @@ class syncDataInterface {
 			  															dbSyncDataProtocol::status_ok);	
 			}
 			elseif ($job[dbSyncDataJobs::field_restore_mode] == dbSyncDataJobs::mode_changed_date_size) {
-				$t1 = filemtime(WB_PATH.'/'.$filename);
+				$t1 = filemtime(LEPTON_PATH.'/'.$filename);
 				$check = true;
 				if ($t1 != $file['mtime']) {
 					$check = false;
@@ -1654,9 +1663,9 @@ class syncDataInterface {
 						if (($t1 > $file['mtime']) && (($t1-$filemtime_differ) == $file['mtime'])) $check = true;
 					}
 				}
-				if (filesize(WB_PATH.'/'.$filename) != $file['size']) $check = false; 
+				if (filesize(LEPTON_PATH.'/'.$filename) != $file['size']) $check = false; 
 				if (!$check) {
-					if (false ===($list = $zip->extractByIndex($file['index'], PCLZIP_OPT_ADD_PATH, WB_PATH.'/', PCLZIP_OPT_REMOVE_PATH, 'files/', PCLZIP_OPT_REPLACE_NEWER))) {
+					if (false ===($list = $zip->extractByIndex($file['index'], PCLZIP_OPT_ADD_PATH, LEPTON_PATH.'/', PCLZIP_OPT_REMOVE_PATH, 'files/', PCLZIP_OPT_REPLACE_NEWER))) {
 						$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $zip->errorInfo(true)));
 						$dbSyncDataProtocol->addEntry($job[dbSyncDataJobs::field_archive_id], 
 				  																$job[dbSyncDataJobs::field_archive_number], 
@@ -1693,9 +1702,9 @@ class syncDataInterface {
 			  																dbSyncDataProtocol::status_error);
 					return false;
 				}
-				if (!$this->compare_files($this->temp_path.$filename, WB_PATH.'/'.$filename)) {
+				if (!$this->compare_files($this->temp_path.$filename, LEPTON_PATH.'/'.$filename)) {
 					// files differ
-					if (false ===($list = $zip->extractByIndex($file['index'], PCLZIP_OPT_ADD_PATH, WB_PATH.'/', PCLZIP_OPT_REMOVE_PATH, 'files/', PCLZIP_OPT_REPLACE_NEWER))) {
+					if (false ===($list = $zip->extractByIndex($file['index'], PCLZIP_OPT_ADD_PATH, LEPTON_PATH.'/', PCLZIP_OPT_REMOVE_PATH, 'files/', PCLZIP_OPT_REPLACE_NEWER))) {
 						$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $zip->errorInfo(true)));
 						$dbSyncDataProtocol->addEntry($job[dbSyncDataJobs::field_archive_id], 
 				  																$job[dbSyncDataJobs::field_archive_number], 
@@ -2034,8 +2043,8 @@ class syncDataInterface {
 		
 		// Informationen ueber das Update in der sync_data.ini festhalten
 		$ini = $job;
-		$ini[self::used_wb_path] = WB_PATH;
-		$ini[self::used_wb_url] = WB_URL;
+		$ini[self::used_LEPTON_PATH] = LEPTON_PATH;
+		$ini[self::used_LEPTON_URL] = LEPTON_URL;
 		$ini[self::used_table_prefix] = TABLE_PREFIX;
 		$ini[self::total_files] = $files[0]['files_count'];
 		$ini[self::total_size] = $files[0]['files_bytes'];
@@ -2354,7 +2363,7 @@ class syncDataInterface {
 		
 		if ($running) {
 			// on first call create file_list and store it at /temp directory
-			$files = $this->directoryTree(WB_PATH);
+			$files = $this->directoryTree(LEPTON_PATH);
 			$fp = fopen($this->temp_path.self::file_list, 'w');
 			foreach($files as $file) fputs($fp, $file."\n");
 			fclose($fp); 			
@@ -2366,7 +2375,7 @@ class syncDataInterface {
 		$ig_dir = $dbSyncDataCfg->getValue(dbSyncDataCfg::cfgIgnoreDirectories);
 		$ig_dir = explode("\n", $ig_dir);
 		$ignore_directories = array();
-		foreach ($ig_dir as $id) $ignore_directories[] = WB_PATH.$id;
+		foreach ($ig_dir as $id) $ignore_directories[] = LEPTON_PATH.$id;
 		$ignore_extensions = $dbSyncDataCfg->getValue(dbSyncDataCfg::cfgIgnoreFileExtensions);
 		
 		// get files from archive
@@ -2398,7 +2407,7 @@ class syncDataInterface {
 		if ($running) {
 			// on first run check if there are files to delete
 			foreach ($aFiles as $check) {
-				if (!in_array(WB_PATH.$check[dbSyncDataFiles::field_file_path], $files)) {
+				if (!in_array(LEPTON_PATH.$check[dbSyncDataFiles::field_file_path], $files)) {
 					// file is deleted
 					$data = array(
 						dbSyncDataFiles::field_action					=> dbSyncDataFiles::action_delete,
@@ -2452,13 +2461,13 @@ class syncDataInterface {
 			
 			$update = false;
 			$action = dbSyncDataFiles::action_ignore;
-			if (!in_array(substr($file, strlen(WB_PATH)), $archived_files)) {
+			if (!in_array(substr($file, strlen(LEPTON_PATH)), $archived_files)) {
 				$update = true;
 				$action = dbSyncDataFiles::action_add;
 			}
 			else {
 				// compare file with archived file
-				$i = array_search(substr($file, strlen(WB_PATH)), $archived_files);
+				$i = array_search(substr($file, strlen(LEPTON_PATH)), $archived_files);
 				if (dechex(crc32(file_get_contents($file))) != $aFiles[$i][dbSyncDataFiles::field_file_checksum]) {
 					$update = true;
 					$action = dbSyncDataFiles::action_replace;
@@ -2468,7 +2477,7 @@ class syncDataInterface {
 				// add new or changed file to archive
 				$data = array();
 	      $list = array();
-	      if (0 == ($list = $zip->add($file, PCLZIP_OPT_ADD_PATH, 'files', PCLZIP_OPT_REMOVE_PATH, WB_PATH))) {
+	      if (0 == ($list = $zip->add($file, PCLZIP_OPT_ADD_PATH, 'files', PCLZIP_OPT_REMOVE_PATH, LEPTON_PATH))) {
 					// Fehler beim Hinzufuegen der Datei
 					$data = array(
 						dbSyncDataFiles::field_action					=> $action,
@@ -2477,7 +2486,7 @@ class syncDataInterface {
 						dbSyncDataFiles::field_file_checksum	=> 0,
 						dbSyncDataFiles::field_file_date			=> '0000-00-00 00:00:00',
 						dbSyncDataFiles::field_file_name			=> basename($file),
-						dbSyncDataFiles::field_file_path			=> str_replace(WB_PATH, '', $file),
+						dbSyncDataFiles::field_file_path			=> str_replace(LEPTON_PATH, '', $file),
 						dbSyncDataFiles::field_file_type			=> dbSyncDataFiles::file_type_file,
 						dbSyncDataFiles::field_file_size			=> 0,
 						dbSyncDataFiles::field_status					=> dbSyncDataFiles::status_error,
@@ -2492,7 +2501,7 @@ class syncDataInterface {
 						dbSyncDataFiles::field_file_checksum	=> dechex($list[0]['crc']),
 						dbSyncDataFiles::field_file_date			=> date('Y-m-d H:i:s', $list[0]['mtime']),
 						dbSyncDataFiles::field_file_name			=> basename($file),
-						dbSyncDataFiles::field_file_path			=> str_replace(WB_PATH, '', $file),
+						dbSyncDataFiles::field_file_path			=> str_replace(LEPTON_PATH, '', $file),
 						dbSyncDataFiles::field_file_type			=> dbSyncDataFiles::file_type_file,
 						dbSyncDataFiles::field_file_size			=> $list[0]['size'],
 						dbSyncDataFiles::field_status					=> dbSyncDataFiles::status_ok,

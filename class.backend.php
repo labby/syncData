@@ -1,66 +1,75 @@
 <?php
 
 /**
- * syncData
+ *  @module         syncData
+ *  @version        see info.php of this module
+ *  @authors        Ralf Hertsch (†), cms-lab
+ *  @copyright      2011 - 2012 Ralf Hertsch (†)
+ *  @copyright      2013-2014 cms-lab 
+ *  @license        GNU GPL (http://www.gnu.org/licenses/gpl.html)
+ *  @license terms  see info.php of this module
  *
- * @author Ralf Hertsch (ralf.hertsch@phpmanufaktur.de)
- * @link http://phpmanufaktur.de
- * @copyright 2011
- * @license GNU GPL (http://www.gnu.org/licenses/gpl.html)
- * @version $Id: class.backend.php 8 2011-08-19 01:26:33Z phpmanufaktur $
- *
- * FOR VERSION- AND RELEASE NOTES PLEASE LOOK AT INFO.TXT!
  */
 
-// include LEPTON class.secure.php to protect this file and the whole CMS!
-$class_secure = '../../framework/class.secure.php';
-if (file_exists($class_secure)) {
-	include($class_secure);
+// include class.secure.php to protect this file and the whole CMS!
+if (defined('LEPTON_PATH')) {	
+	include(LEPTON_PATH.'/framework/class.secure.php'); 
+} else {
+	$oneback = "../";
+	$root = $oneback;
+	$level = 1;
+	while (($level < 10) && (!file_exists($root.'/framework/class.secure.php'))) {
+		$root .= $oneback;
+		$level += 1;
+	}
+	if (file_exists($root.'/framework/class.secure.php')) { 
+		include($root.'/framework/class.secure.php'); 
+	} else {
+		trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
+	}
 }
-else {
-	trigger_error(sprintf("[ <b>%s</b> ] Can't include LEPTON class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
-}
+// end include class.secure.php
 
 // include language file for syncData
-if(!file_exists(WB_PATH .'/modules/'.basename(dirname(__FILE__)).'/languages/' .LANGUAGE .'.php')) {
-	require_once(WB_PATH .'/modules/'.basename(dirname(__FILE__)).'/languages/EN.php');
+if(!file_exists(LEPTON_PATH .'/modules/'.basename(dirname(__FILE__)).'/languages/' .LANGUAGE .'.php')) {
+	require_once(LEPTON_PATH .'/modules/'.basename(dirname(__FILE__)).'/languages/EN.php');
 }
 else {
-	require_once(WB_PATH .'/modules/'.basename(dirname(__FILE__)).'/languages/' .LANGUAGE .'.php');
+	require_once(LEPTON_PATH .'/modules/'.basename(dirname(__FILE__)).'/languages/' .LANGUAGE .'.php');
 }
 
-if (file_exists(WB_PATH.'/modules/pclzip/pclzip.lib.php')) {
+if (file_exists(LEPTON_PATH.'/modules/pclzip/pclzip.lib.php')) {
   // LEPTON 1.x
-	require_once WB_PATH.'/modules/pclzip/pclzip.lib.php';
+	require_once LEPTON_PATH.'/modules/pclzip/pclzip.lib.php';
 }
-elseif (file_exists(WB_PATH.'/modules/lib_pclzip/pclzip.lib.php')) {
+elseif (file_exists(LEPTON_PATH.'/modules/lib_pclzip/pclzip.lib.php')) {
   // LEPTON 2.x
-	require_once WB_PATH.'/modules/lib_pclzip/pclzip.lib.php';
+	require_once LEPTON_PATH.'/modules/lib_pclzip/pclzip.lib.php';
 }
-elseif (file_exists(WB_PATH.'/include/pclzip/pclzip.lib.php')) {
+elseif (file_exists(LEPTON_PATH.'/include/pclzip/pclzip.lib.php')) {
   // WebsiteBaker
-  require_once WB_PATH.'/include/pclzip/pclzip.lib.php';
+  require_once LEPTON_PATH.'/include/pclzip/pclzip.lib.php';
 }
 else {
 	trigger_error(sprintf("[ <b>%s</b> ] Unable to find pclzip!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
 }
 // set temporary directory for pclzip
-if (!defined('PCLZIP_TEMPORARY_DIR')) define('PCLZIP_TEMPORARY_DIR', WB_PATH.'/temp/');
+if (!defined('PCLZIP_TEMPORARY_DIR')) define('PCLZIP_TEMPORARY_DIR', LEPTON_PATH.'/temp/');
 
 if (!class_exists('Dwoo')) {
 	// try to load regular Dwoo
-	if (file_exists(WB_PATH.'/modules/dwoo/include.php')) {
-		require_once WB_PATH.'/modules/dwoo/include.php';
+	if (file_exists(LEPTON_PATH.'/modules/dwoo/include.php')) {
+		require_once LEPTON_PATH.'/modules/dwoo/include.php';
 	}
 	else {
 		// load Dwoo from include directory
-		require_once WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/include/dwoo/dwooAutoload.php';
+		require_once LEPTON_PATH.'/modules/'.basename(dirname(__FILE__)).'/include/dwoo/dwooAutoload.php';
 	}
 }
 
-$cache_path = WB_PATH.'/temp/cache';
+$cache_path = LEPTON_PATH.'/temp/cache';
 if (!file_exists($cache_path)) mkdir($cache_path, 0777, true);
-$compiled_path = WB_PATH.'/temp/compiled';
+$compiled_path = LEPTON_PATH.'/temp/compiled';
 if (!file_exists($compiled_path)) mkdir($compiled_path, 0777, true);
 
 global $parser;
@@ -68,31 +77,31 @@ if (!is_object($parser)) $parser = new Dwoo($compiled_path, $cache_path);
 
 if (!class_exists('dbconnectle')) {
 	// try to load regular dbConnect_LE
-	if (file_exists(WB_PATH.'/modules/dbconnect_le/include.php')) {
-		require_once WB_PATH.'/modules/dbconnect_le/include.php';
+	if (file_exists(LEPTON_PATH.'/modules/dbconnect_le/include.php')) {
+		require_once LEPTON_PATH.'/modules/dbconnect_le/include.php';
 	}
 	else {
 		// load dbConnect_LE from include directory
-		require_once WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/include/dbconnect_le/include.php';
+		require_once LEPTON_PATH.'/modules/'.basename(dirname(__FILE__)).'/include/dbconnect_le/include.php';
 	}
 }
 
 if (!class_exists('kitToolsLibrary')) {
 	// try to load required kitTools
-	if (file_exists(WB_PATH.'/modules/kit_tools/class.tools.php')) {
-		require_once WB_PATH.'/modules/kit_tools/class.tools.php';
+	if (file_exists(LEPTON_PATH.'/modules/kit_tools/class.tools.php')) {
+		require_once LEPTON_PATH.'/modules/kit_tools/class.tools.php';
 	}
 	else {
 		// load embedded kitTools library
-		require_once WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/class.tools.php';
+		require_once LEPTON_PATH.'/modules/'.basename(dirname(__FILE__)).'/class.tools.php';
 	}
 }
 global $kitTools;
 if (!is_object($kitTools)) $kitTools = new kitToolsLibrary();
 
-require_once WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/class.syncdata.php';
-require_once WB_PATH.'/framework/functions.php';
-require_once WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/class.interface.php';
+require_once LEPTON_PATH.'/modules/'.basename(dirname(__FILE__)).'/class.syncdata.php';
+require_once LEPTON_PATH.'/framework/functions.php';
+require_once LEPTON_PATH.'/modules/'.basename(dirname(__FILE__)).'/class.interface.php';
 
 class syncBackend {
 
@@ -149,10 +158,10 @@ class syncBackend {
 	public function __construct() {
 		global $dbSyncDataCfg;
 		$this->page_link = ADMIN_URL.'/admintools/tool.php?tool=sync_data';
-		$this->template_path = WB_PATH . '/modules/' . basename(dirname(__FILE__)) . '/templates/' ;
-		$this->img_url = WB_URL. '/modules/'.basename(dirname(__FILE__)).'/images/';
+		$this->template_path = LEPTON_PATH . '/modules/' . basename(dirname(__FILE__)) . '/templates/' ;
+		$this->img_url = LEPTON_URL. '/modules/'.basename(dirname(__FILE__)).'/images/';
 		date_default_timezone_set(sync_cfg_time_zone);
-		$this->temp_path = WB_PATH.'/temp/sync_data/';
+		$this->temp_path = LEPTON_PATH.'/temp/sync_data/';
 		if (!file_exists($this->temp_path)) mkdir($this->temp_path, 0755, true);
 		$this->memory_limit = $dbSyncDataCfg->getValue(dbSyncDataCfg::cfgMemoryLimit);
 		ini_set("memory_limit",$this->memory_limit);
@@ -230,7 +239,7 @@ class syncBackend {
    */
   public function getVersion() {
     // read info.php into array
-    $info_text = file(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/info.php');
+    $info_text = file(LEPTON_PATH.'/modules/'.basename(dirname(__FILE__)).'/info.php');
     if ($info_text == false) {
       return -1;
     }
@@ -363,7 +372,7 @@ class syncBackend {
   		);
   	}
   	$data = array(
-  		'WB_URL'			=> WB_URL,
+  		'LEPTON_URL'			=> LEPTON_URL,
   		'navigation'	=> $navigation,
   		'error'				=> ($this->isError()) ? 1 : 0,
   		'content'			=> ($this->isError()) ? $this->getError() : $content
@@ -380,7 +389,7 @@ class syncBackend {
   	$data = array(
   		'version'					=> sprintf('%01.2f', $this->getVersion()),
   		'img_url'					=> $this->img_url.'/sync_data_logo.png',
-  		'release_notes'		=> file_get_contents(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/info.txt'),
+  		'release_notes'		=> file_get_contents(LEPTON_PATH.'/modules/'.basename(dirname(__FILE__)).'/info.txt'),
   	);
   	return $this->getTemplate('backend.about.lte', $data);
   } // dlgAbout()
@@ -858,8 +867,8 @@ class syncBackend {
 		$info = sprintf(	sync_msg_backup_finished,
 											$files[0][sprintf('COUNT(%s)', dbSyncDataFiles::field_file_name)],
 											$kitTools->bytes2Str($files[0][sprintf('SUM(%s)', dbSyncDataFiles::field_file_size)]),
-											str_replace(WB_PATH, WB_URL, $interface->getBackupPath().$archive[dbSyncDataArchives::field_archive_name].'.zip'),
-											str_replace(WB_PATH, WB_URL, $interface->getBackupPath().$archive[dbSyncDataArchives::field_archive_name].'.zip') );
+											str_replace(LEPTON_PATH, LEPTON_URL, $interface->getBackupPath().$archive[dbSyncDataArchives::field_archive_name].'.zip'),
+											str_replace(LEPTON_PATH, LEPTON_URL, $interface->getBackupPath().$archive[dbSyncDataArchives::field_archive_name].'.zip') );
 		$data = array(
 			'form'			=> array(	'name'		=> 'backup_continue',
 														'link'		=> $this->page_link,
@@ -955,7 +964,7 @@ class syncBackend {
 		);
 		foreach ($archives as $archive) {
 			$select_array[] = array(
-				'value'			=> str_replace(WB_PATH, '', $archive),
+				'value'			=> str_replace(LEPTON_PATH, '', $archive),
 				'selected'	=> 0,
 				'text'			=> basename($archive)
 			);
@@ -963,7 +972,7 @@ class syncBackend {
 
 		if (count($archives) < 1) {
 			// Mitteilung: kein Archiv gefunden!
-			$dir = str_replace(WB_PATH, '', $interface->getBackupPath());
+			$dir = str_replace(LEPTON_PATH, '', $interface->getBackupPath());
 			$this->setMessage(sprintf(sync_msg_no_backup_files_in_dir, $dir, $dir));
 		}
 
@@ -1031,7 +1040,7 @@ class syncBackend {
   		array('label' => sync_label_archive_type, 	'text' => $dbSyncDataJob->job_type_array[$ini_data[syncDataInterface::section_general][dbSyncDataJobs::field_type]]),
   		array('label' => sync_label_total_files, 		'text' => $ini_data[syncDataInterface::section_general]['total_files']),
   		array('label' => sync_label_total_size, 		'text' => $kitTools->bytes2Str($ini_data[syncDataInterface::section_general]['total_size'])),
-  		array('label' => sync_label_wb_url,					'text' => $ini_data[syncDataInterface::section_general]['used_wb_url']),
+  		array('label' => sync_label_LEPTON_URL,					'text' => $ini_data[syncDataInterface::section_general]['used_LEPTON_URL']),
   		array('label' => sync_label_status, 				'text' => $ini_data[syncDataInterface::section_general][dbSyncDataJobs::field_last_message]),
   		array('label' => sync_label_timestamp, 			'text' => date(sync_cfg_datetime_str, strtotime($ini_data[syncDataInterface::section_general][dbSyncDataJobs::field_timestamp])))
   	);
@@ -1068,7 +1077,7 @@ class syncBackend {
   																								'text'		=> sync_label_restore_mode_replace_all,
   																								'checked'	=> 0))),
   		'replace'		=> array(	'url'			=> array( 'label'		=> sync_label_restore_replace,
-										  													'name'		=> dbSyncDataJobs::field_replace_wb_url, //self::request_restore_replace_url,
+										  													'name'		=> dbSyncDataJobs::field_replace_LEPTON_URL, //self::request_restore_replace_url,
 										  													'value'		=> 1,
 										  													'text'		=> sync_label_restore_replace_url,
 										  													'checked'	=> 1),
@@ -1140,7 +1149,7 @@ class syncBackend {
 
   	// gettting the params for restoring
   	$replace_prefix 			= isset($_REQUEST[dbSyncDataJobs::field_replace_table_prefix]) ? true : false;
-  	$replace_url					= isset($_REQUEST[dbSyncDataJobs::field_replace_wb_url]) ? true : false;
+  	$replace_url					= isset($_REQUEST[dbSyncDataJobs::field_replace_LEPTON_URL]) ? true : false;
   	$restore_mode					= isset($_REQUEST[dbSyncDataJobs::field_restore_mode]) ? $_REQUEST[dbSyncDataJobs::field_restore_mode] : dbSyncDataJobs::mode_changed_date_size;
   	$restore_type					= $_REQUEST[dbSyncDataJobs::field_type];
   	$ignore_config				= isset($_REQUEST[dbSyncDataJobs::field_ignore_config]) ? true : false;
@@ -1582,8 +1591,8 @@ class syncBackend {
 		$info = sprintf(	sync_msg_update_finished,
 											$files[0]['count'],
 											$kitTools->bytes2Str($files[0]['bytes']),
-											str_replace(WB_PATH, WB_URL, $interface->getBackupPath().$archive[dbSyncDataArchives::field_archive_name]),
-											str_replace(WB_PATH, WB_URL, $interface->getBackupPath().$archive[dbSyncDataArchives::field_archive_name]) );
+											str_replace(LEPTON_PATH, LEPTON_URL, $interface->getBackupPath().$archive[dbSyncDataArchives::field_archive_name]),
+											str_replace(LEPTON_PATH, LEPTON_URL, $interface->getBackupPath().$archive[dbSyncDataArchives::field_archive_name]) );
 		$data = array(
 			'form'			=> array(	'name'		=> 'update_finished',
 														'link'		=> $this->page_link,

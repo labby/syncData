@@ -1,25 +1,34 @@
 <?php
 
 /**
- * syncData
- * 
- * @author Ralf Hertsch (ralf.hertsch@phpmanufaktur.de)
- * @link http://phpmanufaktur.de
- * @copyright 2011
- * @license GNU GPL (http://www.gnu.org/licenses/gpl.html)
- * @version $Id$
- * 
- * FOR VERSION- AND RELEASE NOTES PLEASE LOOK AT INFO.TXT!
-  */
+ *  @module         syncData
+ *  @version        see info.php of this module
+ *  @authors        Ralf Hertsch (†), cms-lab
+ *  @copyright      2011 - 2012 Ralf Hertsch (†)
+ *  @copyright      2013-2014 cms-lab 
+ *  @license        GNU GPL (http://www.gnu.org/licenses/gpl.html)
+ *  @license terms  see info.php of this module
+ *
+ */
 
-// include LEPTON class.secure.php to protect this file and the whole CMS!
-$class_secure = '../../framework/class.secure.php';
-if (file_exists($class_secure)) {
-	include($class_secure);
+// include class.secure.php to protect this file and the whole CMS!
+if (defined('LEPTON_PATH')) {	
+	include(LEPTON_PATH.'/framework/class.secure.php'); 
+} else {
+	$oneback = "../";
+	$root = $oneback;
+	$level = 1;
+	while (($level < 10) && (!file_exists($root.'/framework/class.secure.php'))) {
+		$root .= $oneback;
+		$level += 1;
+	}
+	if (file_exists($root.'/framework/class.secure.php')) { 
+		include($root.'/framework/class.secure.php'); 
+	} else {
+		trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
+	}
 }
-else {
-	trigger_error(sprintf("[ <b>%s</b> ] Can't include LEPTON class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
-}
+// end include class.secure.php
 
 class dbSyncDataCfg extends dbConnectLE {
 	
@@ -395,7 +404,7 @@ class dbSyncDataJobs extends dbConnectLE {
 	const field_archive_number				= 'job_archive_number';
 	const field_archive_file					= 'job_archive_file';
 	const field_restore_mode					= 'job_restore_mode';
-	const field_replace_wb_url				= 'job_replace_wb_url';
+	const field_replace_LEPTON_URL				= 'job_replace_LEPTON_URL';
 	const field_replace_table_prefix	= 'job_replace_table_prefix';
 	const field_ignore_htaccess				= 'job_ignore_htaccess';
 	const field_ignore_config					= 'job_ignore_config';
@@ -455,7 +464,7 @@ class dbSyncDataJobs extends dbConnectLE {
   	$this->addFieldDefinition(self::field_archive_file, "TEXT NOT NULL DEFAULT ''");
   	$this->addFieldDefinition(self::field_restore_mode, "TINYINT NOT NULL DEFAULT '".self::mode_changed_date_size."'");
   	$this->addFieldDefinition(self::field_replace_table_prefix, "TINYINT NOT NULL DEFAULT '1'");
-  	$this->addFieldDefinition(self::field_replace_wb_url, "TINYINT NOT NULL DEFAULT '1'");
+  	$this->addFieldDefinition(self::field_replace_LEPTON_URL, "TINYINT NOT NULL DEFAULT '1'");
   	$this->addFieldDefinition(self::field_ignore_config, "TINYINT NOT NULL DEFAULT '1'");
   	$this->addFieldDefinition(self::field_ignore_htaccess, "TINYINT NOT NULL DEFAULT '1'");
   	$this->addFieldDefinition(self::field_delete_files, "TINYINT NOT NULL DEFAULT '0'");

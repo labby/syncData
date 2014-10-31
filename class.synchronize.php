@@ -1,47 +1,59 @@
 <?php
+
 /**
- * syncData
+ *  @module         syncData
+ *  @version        see info.php of this module
+ *  @authors        Ralf Hertsch (†), cms-lab
+ *  @copyright      2011 - 2012 Ralf Hertsch (†)
+ *  @copyright      2013-2014 cms-lab 
+ *  @license        GNU GPL (http://www.gnu.org/licenses/gpl.html)
+ *  @license terms  see info.php of this module
  *
- * @author Ralf Hertsch (ralf.hertsch@phpmanufaktur.de)
- * @link http://phpmanufaktur.de
- * @copyright 2011
- * @license GNU GPL (http://www.gnu.org/licenses/gpl.html)
- * @version $Id$
  */
 
-// include LEPTON class.secure.php to protect this file and the whole CMS!
-$class_secure = '../../framework/class.secure.php';
-if (file_exists($class_secure)) {
-	include($class_secure);
+// include class.secure.php to protect this file and the whole CMS!
+if (defined('LEPTON_PATH')) {	
+	include(LEPTON_PATH.'/framework/class.secure.php'); 
+} else {
+	$oneback = "../";
+	$root = $oneback;
+	$level = 1;
+	while (($level < 10) && (!file_exists($root.'/framework/class.secure.php'))) {
+		$root .= $oneback;
+		$level += 1;
+	}
+	if (file_exists($root.'/framework/class.secure.php')) { 
+		include($root.'/framework/class.secure.php'); 
+	} else {
+		trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
+	}
 }
-else {
-	trigger_error(sprintf("[ <b>%s</b> ] Can't include LEPTON class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
-}
+// end include class.secure.php
 
 // include language file for syncData
-if(!file_exists(WB_PATH .'/modules/'.basename(dirname(__FILE__)).'/languages/' .LANGUAGE .'.php')) {
-	require_once(WB_PATH .'/modules/'.basename(dirname(__FILE__)).'/languages/EN.php');
+if(!file_exists(LEPTON_PATH .'/modules/'.basename(dirname(__FILE__)).'/languages/' .LANGUAGE .'.php')) {
+	require_once(LEPTON_PATH .'/modules/'.basename(dirname(__FILE__)).'/languages/EN.php');
 	if (!defined('SYNC_DATA_LANGUAGE')) define('SYNC_DATA_LANGUAGE', 'EN');
 }
 else {
-	require_once(WB_PATH .'/modules/'.basename(dirname(__FILE__)).'/languages/' .LANGUAGE .'.php');
+	require_once(LEPTON_PATH .'/modules/'.basename(dirname(__FILE__)).'/languages/' .LANGUAGE .'.php');
 	if (!defined('SYNC_DATA_LANGUAGE')) define('SYNC_DATA_LANGUAGE', LANGUAGE);
 }
 
 if (!class_exists('Dwoo')) {
 	// try to load regular Dwoo
-	if (file_exists(WB_PATH.'/modules/dwoo/include.php')) {
-		require_once WB_PATH.'/modules/dwoo/include.php';
+	if (file_exists(LEPTON_PATH.'/modules/dwoo/include.php')) {
+		require_once LEPTON_PATH.'/modules/dwoo/include.php';
 	}
 	else {
 		// load Dwoo from include directory
-		require_once WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/include/dwoo/dwooAutoload.php';
+		require_once LEPTON_PATH.'/modules/'.basename(dirname(__FILE__)).'/include/dwoo/dwooAutoload.php';
 	}
 }
 
-$cache_path = WB_PATH.'/temp/cache';
+$cache_path = LEPTON_PATH.'/temp/cache';
 if (!file_exists($cache_path)) mkdir($cache_path, 0777, true);
-$compiled_path = WB_PATH.'/temp/compiled';
+$compiled_path = LEPTON_PATH.'/temp/compiled';
 if (!file_exists($compiled_path)) mkdir($compiled_path, 0777, true);
 
 global $parser;
@@ -49,47 +61,47 @@ if (!is_object($parser)) $parser = new Dwoo($compiled_path, $cache_path);
 
 if (!class_exists('dbconnectle')) {
 	// try to load regular dbConnect_LE
-	if (file_exists(WB_PATH.'/modules/dbconnect_le/include.php')) {
-		require_once WB_PATH.'/modules/dbconnect_le/include.php';
+	if (file_exists(LEPTON_PATH.'/modules/dbconnect_le/include.php')) {
+		require_once LEPTON_PATH.'/modules/dbconnect_le/include.php';
 	}
 	else {
 		// load dbConnect_LE from include directory
-		require_once WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/include/dbconnect_le/include.php';
+		require_once LEPTON_PATH.'/modules/'.basename(dirname(__FILE__)).'/include/dbconnect_le/include.php';
 	}
 }
 
 if (!class_exists('kitToolsLibrary')) {
 	// try to load required kitTools
-	if (file_exists(WB_PATH.'/modules/kit_tools/class.tools.php')) {
-		require_once WB_PATH.'/modules/kit_tools/class.tools.php';
+	if (file_exists(LEPTON_PATH.'/modules/kit_tools/class.tools.php')) {
+		require_once LEPTON_PATH.'/modules/kit_tools/class.tools.php';
 	}
 	else {
 		// load embedded kitTools library
-		require_once WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/class.tools.php';
+		require_once LEPTON_PATH.'/modules/'.basename(dirname(__FILE__)).'/class.tools.php';
 	}
 }
 global $kitTools;
 if (!is_object($kitTools)) $kitTools = new kitToolsLibrary();
 
-if (file_exists(WB_PATH.'/modules/pclzip/pclzip.lib.php')) {
+if (file_exists(LEPTON_PATH.'/modules/pclzip/pclzip.lib.php')) {
   // LEPTON 1.x
-	require_once WB_PATH.'/modules/pclzip/pclzip.lib.php';
+	require_once LEPTON_PATH.'/modules/pclzip/pclzip.lib.php';
 }
-elseif (file_exists(WB_PATH.'/modules/lib_pclzip/pclzip.lib.php')) {
+elseif (file_exists(LEPTON_PATH.'/modules/lib_pclzip/pclzip.lib.php')) {
   // LEPTON 2.x
-	require_once WB_PATH.'/modules/lib_pclzip/pclzip.lib.php';
+	require_once LEPTON_PATH.'/modules/lib_pclzip/pclzip.lib.php';
 }
-elseif (file_exists(WB_PATH.'/include/pclzip/pclzip.lib.php')) {
+elseif (file_exists(LEPTON_PATH.'/include/pclzip/pclzip.lib.php')) {
   // WebsiteBaker
-  require_once WB_PATH.'/include/pclzip/pclzip.lib.php';
+  require_once LEPTON_PATH.'/include/pclzip/pclzip.lib.php';
 }
 else {
 	trigger_error(sprintf("[ <b>%s</b> ] Unable to find pclzip!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
 }
 // set temporary directory for pclzip
-if (!defined('PCLZIP_TEMPORARY_DIR')) define('PCLZIP_TEMPORARY_DIR', WB_PATH.'/temp/');
+if (!defined('PCLZIP_TEMPORARY_DIR')) define('PCLZIP_TEMPORARY_DIR', LEPTON_PATH.'/temp/');
 
-require_once WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/class.syncdata.php';
+require_once LEPTON_PATH.'/modules/'.basename(dirname(__FILE__)).'/class.syncdata.php';
 
 global $dbSyncDataCfg;
 if (!is_object($dbSyncDataCfg)) $dbSyncDataCfg = new dbSyncDataCfg();
@@ -98,8 +110,8 @@ if (!is_object($dbSyncDataJob)) $dbSyncDataJob = new dbSyncDataJobs();
 global $dbSyncDataArchive;
 if (!is_object($dbSyncDataArchive)) $dbSyncDataArchive = new dbSyncDataArchives();
 
-require_once WB_PATH.'/framework/functions.php';
-require_once WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/class.interface.php';
+require_once LEPTON_PATH.'/framework/functions.php';
+require_once LEPTON_PATH.'/modules/'.basename(dirname(__FILE__)).'/class.interface.php';
 
 
 class syncServer {
@@ -127,7 +139,7 @@ class syncServer {
 	private $backup_path			= '';
 
 	public function __construct() {
-		$this->backup_path = WB_PATH.MEDIA_DIRECTORY.'/sync_data/backup/';
+		$this->backup_path = LEPTON_PATH.MEDIA_DIRECTORY.'/sync_data/backup/';
 
 	} // __construct()
 
@@ -138,7 +150,7 @@ class syncServer {
    */
   public function getVersion() {
     // read info.php into array
-    $info_text = file(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/info.php');
+    $info_text = file(LEPTON_PATH.'/modules/'.basename(dirname(__FILE__)).'/info.php');
     if ($info_text == false) {
       return -1;
     }
@@ -443,10 +455,10 @@ class syncClient {
 		$_SESSION['FRONTEND'] = true;
 		$kitTools->getPageLinkByPageID(PAGE_ID, $url);
 		$this->page_link = $url;
-		$this->template_path = WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/templates/'.$this->params[self::param_preset].'/'.SYNC_DATA_LANGUAGE.'/' ;
+		$this->template_path = LEPTON_PATH.'/modules/'.basename(dirname(__FILE__)).'/templates/'.$this->params[self::param_preset].'/'.SYNC_DATA_LANGUAGE.'/' ;
 		date_default_timezone_set(sync_cfg_time_zone);
-		$this->temp_path = WB_PATH.'/temp/';
-		$this->image_url = WB_URL.'/modules/'.basename(dirname(__FILE__)).'/images/';
+		$this->temp_path = LEPTON_PATH.'/temp/';
+		$this->image_url = LEPTON_URL.'/modules/'.basename(dirname(__FILE__)).'/images/';
 
 		$this->memory_limit = $dbSyncDataCfg->getValue(dbSyncDataCfg::cfgMemoryLimit);
 		ini_set("memory_limit",$this->memory_limit);
@@ -455,7 +467,7 @@ class syncClient {
 		set_time_limit($this->max_execution_time);
 		// setting server URL
 		$server_url = $dbSyncDataCfg->getValue(dbSyncDataCfg::cfgServerURL);
-		$this->server_url = (empty($server_url)) ? WB_URL : $server_url;
+		$this->server_url = (empty($server_url)) ? LEPTON_URL : $server_url;
 	} // __construct()
 
 	/**
@@ -525,7 +537,7 @@ class syncClient {
    */
   public function getVersion() {
     // read info.php into array
-    $info_text = file(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/info.php');
+    $info_text = file(LEPTON_PATH.'/modules/'.basename(dirname(__FILE__)).'/info.php');
     if ($info_text == false) {
       return -1;
     }
@@ -578,7 +590,7 @@ class syncClient {
 	 */
 	public function setParams($params = array()) {
 		$this->params = $params;
-		$this->template_path = WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/templates/'.$this->params[self::param_preset].'/'.SYNC_DATA_LANGUAGE.'/';
+		$this->template_path = LEPTON_PATH.'/modules/'.basename(dirname(__FILE__)).'/templates/'.$this->params[self::param_preset].'/'.SYNC_DATA_LANGUAGE.'/';
 		if (!file_exists($this->template_path)) {
 			$this->setError(sprintf(sync_error_preset_not_exists, '/modules/'.basename(dirname(__FILE__)).'/templates/'.$this->params[self::param_preset].'/'.SYNC_DATA_LANGUAGE.'/'));
 			return false;
@@ -616,8 +628,8 @@ class syncClient {
   		}
   	}
 
-  	//if (($this->params[self::param_server] == WB_URL) && (!isset($_SESSION[self::session_server_url]))) {
-  	if (($this->server_url == WB_URL) && (!isset($_SESSION[self::session_server_url]))) {
+  	//if (($this->params[self::param_server] == LEPTON_URL) && (!isset($_SESSION[self::session_server_url]))) {
+  	if (($this->server_url == LEPTON_URL) && (!isset($_SESSION[self::session_server_url]))) {
   		// don't execute the droplet at the server!
   		// it is possible that the server param is replaced by the update process, so check the session too!
   		return '<div class="sync_data_inactive"></div>';
@@ -793,8 +805,8 @@ class syncClient {
 		}
 
 		// check if confirmation logs must be transmitted
-		if (file_exists(WB_PATH.'/modules/tool_confirmation_log/interface.php')) {
-		  require_once WB_PATH.'/modules/tool_confirmation_log/interface.php';
+		if (file_exists(LEPTON_PATH.'/modules/tool_confirmation_log/interface.php')) {
+		  require_once LEPTON_PATH.'/modules/tool_confirmation_log/interface.php';
 		  $status = '';
 		  if (!transmit($this->server_url, $status)) {
 		    $data = array('message' => sprintf(sync_msg_confirmation_transmit_failed, $status));
@@ -950,13 +962,13 @@ class syncClient {
 	  }
 
 		// ok - all checks done, archive is valid, move it to the regular directory
-		if (!file_exists(WB_PATH.'/media/sync_data/backup')) {
-			if (!mkdir(WB_PATH.'/media/sync_data/backup', 0755, true)) {
+		if (!file_exists(LEPTON_PATH.'/media/sync_data/backup')) {
+			if (!mkdir(LEPTON_PATH.'/media/sync_data/backup', 0755, true)) {
 				$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, sprintf(sync_error_mkdir, '/media/sync_data/backup')));
 				return false;
 			}
 		}
-		if (!rename($this->temp_path.$request[syncServer::result_archive_file], WB_PATH.'/media/sync_data/backup/'.$request[syncServer::result_archive_file])) {
+		if (!rename($this->temp_path.$request[syncServer::result_archive_file], LEPTON_PATH.'/media/sync_data/backup/'.$request[syncServer::result_archive_file])) {
 			$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, sprintf(sync_error_file_rename, $request[syncServer::result_archive_file])));
 			return false;
 		}
@@ -1112,7 +1124,7 @@ class syncClient {
 				$content = str_replace('[[sync_client]]', sprintf('[[sync_client?server=%s]]', $_SESSION[self::session_server_url]), $content);
 			}
 			else {
-				$content = str_replace(sprintf('[[sync_client?server=%s]]', WB_URL), sprintf('[[sync_client?server=%s]]', $_SESSION[self::session_server_url]), $content);
+				$content = str_replace(sprintf('[[sync_client?server=%s]]', LEPTON_URL), sprintf('[[sync_client?server=%s]]', $_SESSION[self::session_server_url]), $content);
 			}
 			$SQL = sprintf( "UPDATE %smod_wysiwyg SET content='%s', text='%s' WHERE section_id='%s'",
 											TABLE_PREFIX,
