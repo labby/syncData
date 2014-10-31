@@ -1,7 +1,7 @@
 ### syncData
 
-Admintool for the the Content Management Systems [LEPTON CMS][1]
-Backup and Synchronize LEPTON CMS [1] installations
+Admintool for the the Content Management Systems [LEPTON CMS][1]<br />
+Backup and Synchronize [LEPTON CMS] [1] installations
 
 
 #### Requirements
