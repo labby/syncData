@@ -911,7 +911,7 @@ if (! class_exists ( 'dbConnectLE' )) {
 				$this->setError ( sprintf ( '[%s - %s] %s', __METHOD__, $except->getLine (), sprintf ( dbc_error_execQuery, $except->getMessage () ) ) );
 				return false;
 			}
-			$id = mysql_insert_id ();
+			$id = $database->get_one("SELECT LAST_INSERT_ID()");
 			return true;
 		} // sqlInsertRecord() 
 		
