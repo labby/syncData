@@ -196,7 +196,7 @@ class syncDataInterface {
 					$val .= 'NULL,';
 				}
 				else {
-					$val .= "'".mysql_real_escape_string($row[$i])."',";
+					$val .= "'".$database->mysql_escape($row[$i])."',";
 				}
 			}
 			$val = substr($val,0,strlen($val)-1);
