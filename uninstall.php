@@ -30,16 +30,6 @@ if (defined('LEPTON_PATH')) {
 }
 // end include class.secure.php
 
-if (!class_exists('checkDroplets')) {
-	// try to load required class.droplets.php
-	if (file_exists(LEPTON_PATH.'/modules/kit_tools/class.droplets.php')) {
-		require_once LEPTON_PATH.'/modules/kit_tools/class.droplets.php';
-	}
-	else {
-		// load embedded class.droplets.php
-		require_once LEPTON_PATH.'/modules/'.basename(dirname(__FILE__)).'//class.droplets.php';
-	}
-}
 
 require_once(LEPTON_PATH .'/modules/'.basename(dirname(__FILE__)).'/class.syncdata.php');
 
@@ -58,15 +48,6 @@ foreach ($tables as $table) {
 	}
 }
 
-// remove Droplets
-$dbDroplets = new dbDroplets();
-$droplets = array('sync_client');
-foreach ($droplets as $droplet) {
-	$where = array(dbDroplets::field_name => $droplet);
-	if (!$dbDroplets->sqlDeleteRecord($where)) {
-		$message = sprintf('[UPGRADE] Error uninstalling Droplet: %s', $dbDroplets->getError());
-	}	
-}
 
 // Prompt Errors
 if (!empty($error)) {

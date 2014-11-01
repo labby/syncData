@@ -38,17 +38,6 @@ else {
 	require_once(LEPTON_PATH .'/modules/'.basename(dirname(__FILE__)).'/languages/' .LANGUAGE .'.php');
 }
 
-if (!class_exists('checkDroplets')) {
-	// try to load required class.droplets.php
-	if (file_exists(LEPTON_PATH.'/modules/kit_tools/class.droplets.php')) {
-		require_once LEPTON_PATH.'/modules/kit_tools/class.droplets.php';
-	}
-	else {
-		// load embedded class.droplets.php
-		require_once LEPTON_PATH.'/modules/'.basename(dirname(__FILE__)).'/class.droplets.php';
-	}
-}
-
 require_once(LEPTON_PATH .'/modules/'.basename(dirname(__FILE__)).'/class.syncdata.php');
 
 global $admin;
@@ -66,18 +55,12 @@ foreach ($tables as $table) {
 	}
 }
 
-// Install Droplets
-$droplets = new checkDroplets();
-$droplets->droplet_path = LEPTON_PATH.'/modules/sync_data/droplets/';
-
-if ($droplets->insertDropletsIntoTable()) {
-  $message = sprintf(sync_msg_install_droplets_success, 'syncData');
+// import default droplep
+if (!function_exists('droplep_install')) {
+    include_once LEPTON_PATH.'/modules/dropleps/functions.php';
 }
-else {
-  $message = sprintf(sync_msg_install_droplets_failed, 'syncData', $droplets->getError());
-}
-if ($message != "") {
-  echo '<script language="javascript">alert ("'.$message.'");</script>';
+if (file_exists(dirname(__FILE__) . '/dropleps/droplep_sync_client.zip')) {
+droplep_install(dirname(__FILE__) . '/dropleps/droplep_sync_client.zip', LEPTON_PATH . '/temp/unzip/');
 }
 
 // Prompt Errors

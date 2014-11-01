@@ -30,6 +30,9 @@ if (defined('LEPTON_PATH')) {
 }
 // end include class.secure.php
 
+// load dbConnect_LE from include directory
+require_once LEPTON_PATH.'/modules/'.basename(dirname(__FILE__)).'/include/dbconnect_le/include.php';
+
 class dbSyncDataCfg extends dbConnectLE {
 	
 	const field_id						= 'cfg_id';
