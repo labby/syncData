@@ -110,7 +110,7 @@ if (!is_object($dbSyncDataJob)) $dbSyncDataJob = new dbSyncDataJobs();
 global $dbSyncDataArchive;
 if (!is_object($dbSyncDataArchive)) $dbSyncDataArchive = new dbSyncDataArchives();
 
-require_once LEPTON_PATH.'/framework/functions.php';
+require_once LEPTON_PATH.'/framework/summary.functions.php';
 require_once LEPTON_PATH.'/modules/'.basename(dirname(__FILE__)).'/class.interface.php';
 
 

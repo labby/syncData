@@ -100,7 +100,7 @@ global $kitTools;
 if (!is_object($kitTools)) $kitTools = new kitToolsLibrary();
 
 require_once LEPTON_PATH.'/modules/'.basename(dirname(__FILE__)).'/class.syncdata.php';
-require_once LEPTON_PATH.'/framework/functions.php';
+require_once LEPTON_PATH.'/framework/summary.functions.php';
 require_once LEPTON_PATH.'/modules/'.basename(dirname(__FILE__)).'/class.interface.php';
 
 class syncBackend {
