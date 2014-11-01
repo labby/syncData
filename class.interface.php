@@ -148,7 +148,7 @@ class syncDataInterface {
 	protected function getTables() { 
 		global $database;
 		$tables = array();
-		$SQL = sprintf("SHOW TABLES FROM %s", DB_NAME);
+		$SQL = sprintf("SHOW TABLES FROM `%s`", DB_NAME);
 		if (false ===($query = $database->query($SQL))) {
 			$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $database->get_error()));
 			return false;
