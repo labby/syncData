@@ -51,28 +51,28 @@ if (!is_object($interface)) $interface = new syncDataInterface();
 
 class syncDataInterface {
 	
-	const used_LEPTON_URL									= 'used_LEPTON_URL';
-	const used_LEPTON_PATH								= 'used_LEPTON_PATH';
-	const used_table_prefix						= 'used_table_prefix';
+	const used_LEPTON_URL			= 'used_LEPTON_URL';
+	const used_LEPTON_PATH			= 'used_LEPTON_PATH';
+	const used_table_prefix			= 'used_table_prefix';
 	
-	const total_files									= 'total_files';
-	const total_size									= 'total_size';
-	const file_list										= 'files.lst';
-	const sync_data_ini 							= 'sync_data.ini';
-	const archive_list								= 'archive.lst';		
-	const section_deleted_tables			= 'deleted_tables';
-	const section_deleted_files				= 'deleted_files';
-	const section_general							= 'general';
+	const total_files				= 'total_files';
+	const total_size				= 'total_size';
+	const file_list					= 'files.lst';
+	const sync_data_ini 			= 'sync_data.ini';
+	const archive_list				= 'archive.lst';		
+	const section_deleted_tables	= 'deleted_tables';
+	const section_deleted_files		= 'deleted_files';
+	const section_general			= 'general';
 	
-	private $error										= '';	
-	private $temp_path 								= '';
-	private $max_execution_time				= 30;
-	private $limit_execution_time			= 25;
-	private $memory_limit							= '256M'; 
-	private $script_start							= 0;
-	private $status										= dbSyncDataJobs::status_undefined;
-	private $backup_path							= '';
-	private $restore_path							= '';
+	private $error					= '';	
+	private $temp_path 				= '';
+	private $max_execution_time		= 30;
+	private $limit_execution_time	= 25;
+	private $memory_limit			= '256M'; 
+	private $script_start			= 0;
+	private $status					= dbSyncDataJobs::status_undefined;
+	private $backup_path			= '';
+	private $restore_path			= '';
 	
 	/**
 	 * Constructor
@@ -383,12 +383,12 @@ class syncDataInterface {
 		
 		$data = array(
 			dbSyncDataArchives::field_archive_date		=> date('Y-m-d H:i:s'),
-			dbSyncDataArchives::field_archive_id			=> $archive_id,
+			dbSyncDataArchives::field_archive_id		=> $archive_id,
 			dbSyncDataArchives::field_archive_name		=> $archive_name,
 			dbSyncDataArchives::field_archive_number	=> 1,
 			dbSyncDataArchives::field_archive_type		=> dbSyncDataArchives::archive_type_backup,
-			dbSyncDataArchives::field_backup_type			=> $archive_type,
-			dbSyncDataArchives::field_status					=> dbSyncDataArchives::status_active
+			dbSyncDataArchives::field_backup_type		=> $archive_type,
+			dbSyncDataArchives::field_status			=> dbSyncDataArchives::status_active
 		);
     $id = -1;
 		if (!$dbSyncDataArchive->sqlInsertRecord($data, $id)) {
@@ -412,11 +412,11 @@ class syncDataInterface {
 		$data = array(
 			dbSyncDataJobs::field_archive_file		=> $archive_file,
 			dbSyncDataJobs::field_archive_number	=> 1,
-			dbSyncDataJobs::field_archive_id			=> $archive_id,
-			dbSyncDataJobs::field_errors					=> 0,
-			dbSyncDataJobs::field_start						=> date('Y-m-d H:i:s'),
-			dbSyncDataJobs::field_status					=> dbSyncDataJobs::status_start,
-			dbSyncDataJobs::field_type						=> $job_type
+			dbSyncDataJobs::field_archive_id		=> $archive_id,
+			dbSyncDataJobs::field_errors			=> 0,
+			dbSyncDataJobs::field_start				=> date('Y-m-d H:i:s'),
+			dbSyncDataJobs::field_status			=> dbSyncDataJobs::status_start,
+			dbSyncDataJobs::field_type				=> $job_type
 		);
 		$job_id = -1;
 		if (!$dbSyncDataJob->sqlInsertRecord($data, $job_id)) {
@@ -597,17 +597,17 @@ class syncDataInterface {
 			if (in_array($table, $ignore_tables)) {
 				// Tabelle ignorieren
 				$data = array(
-					dbSyncDataFiles::field_action					=> dbSyncDataFiles::action_ignore,
-					dbSyncDataFiles::field_archive_id			=> $job[dbSyncDataJobs::field_archive_id],
+					dbSyncDataFiles::field_action			=> dbSyncDataFiles::action_ignore,
+					dbSyncDataFiles::field_archive_id		=> $job[dbSyncDataJobs::field_archive_id],
 					dbSyncDataFiles::field_archive_number	=> $job[dbSyncDataJobs::field_archive_number],
 					dbSyncDataFiles::field_file_checksum	=> 0,
-					dbSyncDataFiles::field_file_date			=> '0000-00-00 00:00:00',
-					dbSyncDataFiles::field_file_name			=> $table.'.sql',
-					dbSyncDataFiles::field_file_path			=> '',
-					dbSyncDataFiles::field_file_type			=> dbSyncDataFiles::file_type_mysql,
-					dbSyncDataFiles::field_file_size			=> 0,
-					dbSyncDataFiles::field_status					=> dbSyncDataFiles::status_ok,
-					dbSyncDataFiles::field_error_msg			=> ''
+					dbSyncDataFiles::field_file_date		=> '0000-00-00 00:00:00',
+					dbSyncDataFiles::field_file_name		=> $table.'.sql',
+					dbSyncDataFiles::field_file_path		=> '',
+					dbSyncDataFiles::field_file_type		=> dbSyncDataFiles::file_type_mysql,
+					dbSyncDataFiles::field_file_size		=> 0,
+					dbSyncDataFiles::field_status			=> dbSyncDataFiles::status_ok,
+					dbSyncDataFiles::field_error_msg		=> ''
 				);
 			}
 			else {
@@ -616,32 +616,32 @@ class syncDataInterface {
 				if (0 == ($list = $zip->add($this->temp_path.'sql/'.$table.'.sql', PCLZIP_OPT_ADD_PATH, 'sql', PCLZIP_OPT_REMOVE_PATH, $this->temp_path.'sql/'))) {
 					// Fehler beim Hinzufuegen der Datei
 					$data = array(
-						dbSyncDataFiles::field_action					=> dbSyncDataFiles::action_add,
-						dbSyncDataFiles::field_archive_id			=> $job[dbSyncDataJobs::field_archive_id],
+						dbSyncDataFiles::field_action			=> dbSyncDataFiles::action_add,
+						dbSyncDataFiles::field_archive_id		=> $job[dbSyncDataJobs::field_archive_id],
 						dbSyncDataFiles::field_archive_number	=> $job[dbSyncDataJobs::field_archive_number],
 						dbSyncDataFiles::field_file_checksum	=> 0,
-						dbSyncDataFiles::field_file_date			=> '0000-00-00 00:00:00',
-						dbSyncDataFiles::field_file_name			=> $table.'.sql',
-						dbSyncDataFiles::field_file_path			=> '',
-						dbSyncDataFiles::field_file_type			=> dbSyncDataFiles::file_type_mysql,
-						dbSyncDataFiles::field_file_size			=> 0,
-						dbSyncDataFiles::field_status					=> dbSyncDataFiles::status_error,
-						dbSyncDataFiles::field_error_msg			=> $zip->errorInfo(true)
+						dbSyncDataFiles::field_file_date		=> '0000-00-00 00:00:00',
+						dbSyncDataFiles::field_file_name		=> $table.'.sql',
+						dbSyncDataFiles::field_file_path		=> '',
+						dbSyncDataFiles::field_file_type		=> dbSyncDataFiles::file_type_mysql,
+						dbSyncDataFiles::field_file_size		=> 0,
+						dbSyncDataFiles::field_status			=> dbSyncDataFiles::status_error,
+						dbSyncDataFiles::field_error_msg		=> $zip->errorInfo(true)
 					);
 				}
 				else {
 					$data = array(
-						dbSyncDataFiles::field_action					=> dbSyncDataFiles::action_add,
-						dbSyncDataFiles::field_archive_id			=> $job[dbSyncDataJobs::field_archive_id],
+						dbSyncDataFiles::field_action			=> dbSyncDataFiles::action_add,
+						dbSyncDataFiles::field_archive_id		=> $job[dbSyncDataJobs::field_archive_id],
 						dbSyncDataFiles::field_archive_number	=> $job[dbSyncDataJobs::field_archive_number],
 						dbSyncDataFiles::field_file_checksum	=> dechex($list[0]['crc']),
-						dbSyncDataFiles::field_file_date			=> date('Y-m-d H:i:s', $list[0]['mtime']),
-						dbSyncDataFiles::field_file_name			=> $table.'.sql',
-						dbSyncDataFiles::field_file_path			=> '',
-						dbSyncDataFiles::field_file_type			=> dbSyncDataFiles::file_type_mysql,
-						dbSyncDataFiles::field_file_size			=> $list[0]['size'],
-						dbSyncDataFiles::field_status					=> dbSyncDataFiles::status_ok,
-						dbSyncDataFiles::field_error_msg			=> ''
+						dbSyncDataFiles::field_file_date		=> date('Y-m-d H:i:s', $list[0]['mtime']),
+						dbSyncDataFiles::field_file_name		=> $table.'.sql',
+						dbSyncDataFiles::field_file_path		=> '',
+						dbSyncDataFiles::field_file_type		=> dbSyncDataFiles::file_type_mysql,
+						dbSyncDataFiles::field_file_size		=> $list[0]['size'],
+						dbSyncDataFiles::field_status			=> dbSyncDataFiles::status_ok,
+						dbSyncDataFiles::field_error_msg		=> ''
 					);
 				}
 			}
@@ -667,11 +667,11 @@ class syncDataInterface {
 		global $dbSyncDataJob;
 		
 		$data = array(
-			dbSyncDataJobs::field_status				=> dbSyncDataJobs::status_time_out,
+			dbSyncDataJobs::field_status		=> dbSyncDataJobs::status_time_out,
 			dbSyncDataJobs::field_last_message	=> 'TIME_OUT',
-			dbSyncDataJobs::field_total_time		=> (microtime(true) - $this->getScriptStart())+$old_total_time,
-			dbSyncDataJobs::field_next_action		=> ($process_files) ? dbSyncDataJobs::next_action_file : dbSyncDataJobs::next_action_mysql,
-			dbSyncDataJobs::field_next_file			=> $this->next_file
+			dbSyncDataJobs::field_total_time	=> (microtime(true) - $this->getScriptStart())+$old_total_time,
+			dbSyncDataJobs::field_next_action	=> ($process_files) ? dbSyncDataJobs::next_action_file : dbSyncDataJobs::next_action_mysql,
+			dbSyncDataJobs::field_next_file		=> $this->next_file
 		);
 		$where = array(
 			dbSyncDataJobs::field_id	=> $job_id
@@ -700,12 +700,12 @@ class syncDataInterface {
 		
 		// Datensicherung abgeschlossen
 		$data = array(
-			dbSyncDataJobs::field_status				=> dbSyncDataJobs::status_finished,
+			dbSyncDataJobs::field_status		=> dbSyncDataJobs::status_finished,
 			dbSyncDataJobs::field_last_message	=> 'FINISHED',
-			dbSyncDataJobs::field_total_time		=> (microtime(true) - $this->script_start) + $old_total_time,
-			dbSyncDataJobs::field_next_action		=> dbSyncDataJobs::next_action_none,
-			dbSyncDataJobs::field_next_file			=> '',
-			dbSyncDataJobs::field_end						=> date('Y-m-d H:i:s')
+			dbSyncDataJobs::field_total_time	=> (microtime(true) - $this->script_start) + $old_total_time,
+			dbSyncDataJobs::field_next_action	=> dbSyncDataJobs::next_action_none,
+			dbSyncDataJobs::field_next_file		=> '',
+			dbSyncDataJobs::field_end			=> date('Y-m-d H:i:s')
 		);
 		$where = array(
 			dbSyncDataJobs::field_id	=> $job_id
@@ -911,17 +911,17 @@ class syncDataInterface {
 			foreach ($ignore_directories as $ig_dir) {
 				if (strpos($file, $ig_dir) !== false) {
 					$data = array(
-						dbSyncDataFiles::field_action					=> dbSyncDataFiles::action_ignore,
-						dbSyncDataFiles::field_archive_id			=> $job[dbSyncDataJobs::field_archive_id],
+						dbSyncDataFiles::field_action			=> dbSyncDataFiles::action_ignore,
+						dbSyncDataFiles::field_archive_id		=> $job[dbSyncDataJobs::field_archive_id],
 						dbSyncDataFiles::field_archive_number	=> $job[dbSyncDataJobs::field_archive_number],
 						dbSyncDataFiles::field_file_checksum	=> 0,
-						dbSyncDataFiles::field_file_date			=> '0000-00-00 00:00:00',
-						dbSyncDataFiles::field_file_name			=> basename($file),
-						dbSyncDataFiles::field_file_path			=> str_replace(LEPTON_PATH, '', $file),
-						dbSyncDataFiles::field_file_type			=> dbSyncDataFiles::file_type_file,
-						dbSyncDataFiles::field_file_size			=> 0,
-						dbSyncDataFiles::field_status					=> dbSyncDataFiles::status_ok,
-						dbSyncDataFiles::field_error_msg			=> ''
+						dbSyncDataFiles::field_file_date		=> '0000-00-00 00:00:00',
+						dbSyncDataFiles::field_file_name		=> basename($file),
+						dbSyncDataFiles::field_file_path		=> str_replace(LEPTON_PATH, '', $file),
+						dbSyncDataFiles::field_file_type		=> dbSyncDataFiles::file_type_file,
+						dbSyncDataFiles::field_file_size		=> 0,
+						dbSyncDataFiles::field_status			=> dbSyncDataFiles::status_ok,
+						dbSyncDataFiles::field_error_msg		=> ''
 					);
 					if (!$dbSyncDataFile->sqlInsertRecord($data)) {
 						$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbSyncDataFile->getError()));
@@ -940,32 +940,32 @@ class syncDataInterface {
       if (0 == ($list = $zip->add($file, PCLZIP_OPT_ADD_PATH, 'files', PCLZIP_OPT_REMOVE_PATH, LEPTON_PATH))) {
 				// Fehler beim Hinzufuegen der Datei
 				$data = array(
-					dbSyncDataFiles::field_action					=> dbSyncDataFiles::action_add,
-					dbSyncDataFiles::field_archive_id			=> $job[dbSyncDataJobs::field_archive_id],
+					dbSyncDataFiles::field_action			=> dbSyncDataFiles::action_add,
+					dbSyncDataFiles::field_archive_id		=> $job[dbSyncDataJobs::field_archive_id],
 					dbSyncDataFiles::field_archive_number	=> $job[dbSyncDataJobs::field_archive_number],
 					dbSyncDataFiles::field_file_checksum	=> 0,
-					dbSyncDataFiles::field_file_date			=> '0000-00-00 00:00:00',
-					dbSyncDataFiles::field_file_name			=> basename($file),
-					dbSyncDataFiles::field_file_path			=> str_replace(LEPTON_PATH, '', $file),
-					dbSyncDataFiles::field_file_type			=> dbSyncDataFiles::file_type_file,
-					dbSyncDataFiles::field_file_size			=> 0,
-					dbSyncDataFiles::field_status					=> dbSyncDataFiles::status_error,
-					dbSyncDataFiles::field_error_msg			=> $zip->errorInfo(true)
+					dbSyncDataFiles::field_file_date		=> '0000-00-00 00:00:00',
+					dbSyncDataFiles::field_file_name		=> basename($file),
+					dbSyncDataFiles::field_file_path		=> str_replace(LEPTON_PATH, '', $file),
+					dbSyncDataFiles::field_file_type		=> dbSyncDataFiles::file_type_file,
+					dbSyncDataFiles::field_file_size		=> 0,
+					dbSyncDataFiles::field_status			=> dbSyncDataFiles::status_error,
+					dbSyncDataFiles::field_error_msg		=> $zip->errorInfo(true)
 				); 
 			}
 			else {
 				$data = array(
-					dbSyncDataFiles::field_action					=> dbSyncDataFiles::action_add,
-					dbSyncDataFiles::field_archive_id			=> $job[dbSyncDataJobs::field_archive_id],
+					dbSyncDataFiles::field_action			=> dbSyncDataFiles::action_add,
+					dbSyncDataFiles::field_archive_id		=> $job[dbSyncDataJobs::field_archive_id],
 					dbSyncDataFiles::field_archive_number	=> $job[dbSyncDataJobs::field_archive_number],
 					dbSyncDataFiles::field_file_checksum	=> dechex($list[0]['crc']),
-					dbSyncDataFiles::field_file_date			=> date('Y-m-d H:i:s', $list[0]['mtime']),
-					dbSyncDataFiles::field_file_name			=> basename($file),
-					dbSyncDataFiles::field_file_path			=> str_replace(LEPTON_PATH, '', $file),
-					dbSyncDataFiles::field_file_type			=> dbSyncDataFiles::file_type_file,
-					dbSyncDataFiles::field_file_size			=> $list[0]['size'],
-					dbSyncDataFiles::field_status					=> dbSyncDataFiles::status_ok,
-					dbSyncDataFiles::field_error_msg			=> ''
+					dbSyncDataFiles::field_file_date		=> date('Y-m-d H:i:s', $list[0]['mtime']),
+					dbSyncDataFiles::field_file_name		=> basename($file),
+					dbSyncDataFiles::field_file_path		=> str_replace(LEPTON_PATH, '', $file),
+					dbSyncDataFiles::field_file_type		=> dbSyncDataFiles::file_type_file,
+					dbSyncDataFiles::field_file_size		=> $list[0]['size'],
+					dbSyncDataFiles::field_status			=> dbSyncDataFiles::status_ok,
+					dbSyncDataFiles::field_error_msg		=> ''
 				);
 			}
 			if (!$dbSyncDataFile->sqlInsertRecord($data)) {
@@ -1082,25 +1082,25 @@ class syncDataInterface {
   		$next_action = dbSyncDataJobs::next_action_file;
   	}
   	$job = array(
-  		dbSyncDataJobs::field_archive_file					=> $backup_archive,
-  		dbSyncDataJobs::field_archive_id						=> $ini_data[syncDataInterface::section_general][dbSyncDataJobs::field_archive_id],
-  		dbSyncDataJobs::field_archive_number				=> $ini_data[syncDataInterface::section_general][dbSyncDataJobs::field_archive_number],
-  		dbSyncDataJobs::field_errors								=> 0,
-  		dbSyncDataJobs::field_last_error						=> '',
-  		dbSyncDataJobs::field_last_message					=> '',
-  		dbSyncDataJobs::field_next_action						=> $next_action,
-  		dbSyncDataJobs::field_next_file							=> '',
+  		dbSyncDataJobs::field_archive_file			=> $backup_archive,
+  		dbSyncDataJobs::field_archive_id			=> $ini_data[syncDataInterface::section_general][dbSyncDataJobs::field_archive_id],
+  		dbSyncDataJobs::field_archive_number		=> $ini_data[syncDataInterface::section_general][dbSyncDataJobs::field_archive_number],
+  		dbSyncDataJobs::field_errors				=> 0,
+  		dbSyncDataJobs::field_last_error			=> '',
+  		dbSyncDataJobs::field_last_message			=> '',
+  		dbSyncDataJobs::field_next_action			=> $next_action,
+  		dbSyncDataJobs::field_next_file				=> '',
   		dbSyncDataJobs::field_replace_table_prefix	=> $replace_prefix ? 1 : 0,
-  		dbSyncDataJobs::field_replace_LEPTON_URL				=> $replace_url ? 1 : 0,
-  		dbSyncDataJobs::field_restore_mode					=> $restore_mode,
-  		dbSyncDataJobs::field_start									=> date('Y-m-d H:i:s'),
-  		dbSyncDataJobs::field_status								=> dbSyncDataJobs::status_start,
-  		dbSyncDataJobs::field_total_time						=> 0,
-  		dbSyncDataJobs::field_type									=> $type,
-  		dbSyncDataJobs::field_ignore_config					=> $ignore_config ? 1 : 0,
-  		dbSyncDataJobs::field_ignore_htaccess				=> $ignore_htaccess ? 1 : 0,
-  		dbSyncDataJobs::field_delete_files					=> $delete_files ? 1 : 0,
-  		dbSyncDataJobs::field_delete_tables					=> $delete_tables ? 1 : 0
+  		dbSyncDataJobs::field_replace_LEPTON_URL	=> $replace_url ? 1 : 0,
+  		dbSyncDataJobs::field_restore_mode			=> $restore_mode,
+  		dbSyncDataJobs::field_start					=> date('Y-m-d H:i:s'),
+  		dbSyncDataJobs::field_status				=> dbSyncDataJobs::status_start,
+  		dbSyncDataJobs::field_total_time			=> 0,
+  		dbSyncDataJobs::field_type					=> $type,
+  		dbSyncDataJobs::field_ignore_config			=> $ignore_config ? 1 : 0,
+  		dbSyncDataJobs::field_ignore_htaccess		=> $ignore_htaccess ? 1 : 0,
+  		dbSyncDataJobs::field_delete_files			=> $delete_files ? 1 : 0,
+  		dbSyncDataJobs::field_delete_tables			=> $delete_tables ? 1 : 0
   	);
   	if (!$dbSyncDataJob->sqlInsertRecord($job, $job_id)) {
   		$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbSyncDataJob->getError()));
@@ -1747,11 +1747,11 @@ class syncDataInterface {
 		global $dbSyncDataJob;
 		
 		$data = array(
-			dbSyncDataJobs::field_status				=> dbSyncDataJobs::status_time_out,
+			dbSyncDataJobs::field_status		=> dbSyncDataJobs::status_time_out,
 			dbSyncDataJobs::field_last_message	=> 'TIME_OUT',
-			dbSyncDataJobs::field_total_time		=> (microtime(true) - $this->getScriptStart())+$old_total_time,
-			dbSyncDataJobs::field_next_action		=> ($process_files) ? dbSyncDataJobs::next_action_file : dbSyncDataJobs::next_action_mysql,
-			dbSyncDataJobs::field_next_file			=> $this->next_file
+			dbSyncDataJobs::field_total_time	=> (microtime(true) - $this->getScriptStart())+$old_total_time,
+			dbSyncDataJobs::field_next_action	=> ($process_files) ? dbSyncDataJobs::next_action_file : dbSyncDataJobs::next_action_mysql,
+			dbSyncDataJobs::field_next_file		=> $this->next_file
 		);
 		$where = array(
 			dbSyncDataJobs::field_id	=> $job_id
@@ -1776,12 +1776,12 @@ class syncDataInterface {
 		global $dbSyncDataJob;
 		
 		$data = array(
-			dbSyncDataJobs::field_status				=> dbSyncDataJobs::status_finished,
+			dbSyncDataJobs::field_status		=> dbSyncDataJobs::status_finished,
 			dbSyncDataJobs::field_last_message	=> 'FINISHED',
-			dbSyncDataJobs::field_total_time		=> (microtime(true) - $this->getScriptStart())+$old_total_time,
-			dbSyncDataJobs::field_next_action		=> dbSyncDataJobs::next_action_none,
-			dbSyncDataJobs::field_next_file			=> '',
-			dbSyncDataJobs::field_end						=> date('Y-m-d H:i:s')
+			dbSyncDataJobs::field_total_time	=> (microtime(true) - $this->getScriptStart())+$old_total_time,
+			dbSyncDataJobs::field_next_action	=> dbSyncDataJobs::next_action_none,
+			dbSyncDataJobs::field_next_file		=> '',
+			dbSyncDataJobs::field_end			=> date('Y-m-d H:i:s')
 		);
 		$where = array(
 			dbSyncDataJobs::field_id	=> $job_id
@@ -1837,11 +1837,11 @@ class syncDataInterface {
 		// create a new archive for the update
 		$data = array(
 			dbSyncDataArchives::field_archive_date		=> date('Y-m-d H:i:s'),
-			dbSyncDataArchives::field_archive_id			=> $archive_id,
+			dbSyncDataArchives::field_archive_id		=> $archive_id,
 			dbSyncDataArchives::field_archive_name		=> (!empty($update_name)) ? $update_name : sprintf(sync_str_update_default_name, date(sync_cfg_datetime_str)),
 			dbSyncDataArchives::field_archive_number	=> $new_archive_number,
 			dbSyncDataArchives::field_archive_type		=> $old_archive[dbSyncDataArchives::field_archive_type],
-			dbSyncDataArchives::field_status					=> dbSyncDataArchives::status_active
+			dbSyncDataArchives::field_status			=> dbSyncDataArchives::status_active
 		);
 		$id = -1;
 		if (!$dbSyncDataArchive->sqlInsertRecord($data, $id)) {
@@ -1865,12 +1865,12 @@ class syncDataInterface {
 		$data = array(
 			dbSyncDataJobs::field_archive_file		=> $archive_file,
 			dbSyncDataJobs::field_archive_number	=> $new_archive_number,
-			dbSyncDataJobs::field_archive_id			=> $archive_id,
-			dbSyncDataJobs::field_errors					=> 0,
-			dbSyncDataJobs::field_start						=> date('Y-m-d H:i:s'),
-			dbSyncDataJobs::field_status					=> dbSyncDataJobs::status_start,
-			dbSyncDataJobs::field_type						=> $job_type,
-			dbSyncDataJobs::field_next_file				=> ''
+			dbSyncDataJobs::field_archive_id		=> $archive_id,
+			dbSyncDataJobs::field_errors			=> 0,
+			dbSyncDataJobs::field_start				=> date('Y-m-d H:i:s'),
+			dbSyncDataJobs::field_status			=> dbSyncDataJobs::status_start,
+			dbSyncDataJobs::field_type				=> $job_type,
+			dbSyncDataJobs::field_next_file			=> ''
 		);
 		$job_id = -1;
 		if (!$dbSyncDataJob->sqlInsertRecord($data, $job_id)) {
@@ -1925,12 +1925,12 @@ class syncDataInterface {
 		
 		// Datensicherung abgeschlossen
 		$data = array(
-			dbSyncDataJobs::field_status				=> dbSyncDataJobs::status_finished,
+			dbSyncDataJobs::field_status		=> dbSyncDataJobs::status_finished,
 			dbSyncDataJobs::field_last_message	=> 'FINISHED',
-			dbSyncDataJobs::field_total_time		=> (microtime(true) - $this->script_start) + $old_total_time,
-			dbSyncDataJobs::field_next_action		=> dbSyncDataJobs::next_action_none,
-			dbSyncDataJobs::field_next_file			=> '',
-			dbSyncDataJobs::field_end						=> date('Y-m-d H:i:s')
+			dbSyncDataJobs::field_total_time	=> (microtime(true) - $this->script_start) + $old_total_time,
+			dbSyncDataJobs::field_next_action	=> dbSyncDataJobs::next_action_none,
+			dbSyncDataJobs::field_next_file		=> '',
+			dbSyncDataJobs::field_end			=> date('Y-m-d H:i:s')
 		);
 		$where = array(
 			dbSyncDataJobs::field_id	=> $job_id
@@ -2155,17 +2155,17 @@ class syncDataInterface {
 				if (!in_array($archived_table, $tables)) {
 					// table is deleted
 					$data = array(
-						dbSyncDataFiles::field_action					=> dbSyncDataFiles::action_delete,
-						dbSyncDataFiles::field_archive_id			=> $job[dbSyncDataFiles::field_archive_id],
+						dbSyncDataFiles::field_action			=> dbSyncDataFiles::action_delete,
+						dbSyncDataFiles::field_archive_id		=> $job[dbSyncDataFiles::field_archive_id],
 						dbSyncDataFiles::field_archive_number	=> $job[dbSyncDataFiles::field_archive_number],
-						dbSyncDataFiles::field_error_msg			=> '',
+						dbSyncDataFiles::field_error_msg		=> '',
 						dbSyncDataFiles::field_file_checksum	=> 0,
-						dbSyncDataFiles::field_file_date			=> '0000-00-00 00:00:00',
-						dbSyncDataFiles::field_file_name			=> $archived_table.'.sql',
-						dbSyncDataFiles::field_file_path			=> '',
-						dbSyncDataFiles::field_file_size			=> 0,
-						dbSyncDataFiles::field_file_type			=> dbSyncDataFiles::file_type_mysql,
-						dbSyncDataFiles::field_status					=> dbSyncDataFiles::status_ok
+						dbSyncDataFiles::field_file_date		=> '0000-00-00 00:00:00',
+						dbSyncDataFiles::field_file_name		=> $archived_table.'.sql',
+						dbSyncDataFiles::field_file_path		=> '',
+						dbSyncDataFiles::field_file_size		=> 0,
+						dbSyncDataFiles::field_file_type		=> dbSyncDataFiles::file_type_mysql,
+						dbSyncDataFiles::field_status			=> dbSyncDataFiles::status_ok
 					);
 					if (!$dbSyncDataFile->sqlInsertRecord($data)) {
 						$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbSyncDataFile->getError()));
@@ -2194,17 +2194,17 @@ class syncDataInterface {
 			if (in_array($table, $ignore_tables)) {
 				// Tabelle ignorieren
 				$data = array(
-					dbSyncDataFiles::field_action					=> dbSyncDataFiles::action_ignore,
-					dbSyncDataFiles::field_archive_id			=> $job[dbSyncDataJobs::field_archive_id],
+					dbSyncDataFiles::field_action			=> dbSyncDataFiles::action_ignore,
+					dbSyncDataFiles::field_archive_id		=> $job[dbSyncDataJobs::field_archive_id],
 					dbSyncDataFiles::field_archive_number	=> $job[dbSyncDataJobs::field_archive_number],
 					dbSyncDataFiles::field_file_checksum	=> 0,
-					dbSyncDataFiles::field_file_date			=> '0000-00-00 00:00:00',
-					dbSyncDataFiles::field_file_name			=> $table.'.sql',
-					dbSyncDataFiles::field_file_path			=> '',
-					dbSyncDataFiles::field_file_type			=> dbSyncDataFiles::file_type_mysql,
-					dbSyncDataFiles::field_file_size			=> 0,
-					dbSyncDataFiles::field_status					=> dbSyncDataFiles::status_ok,
-					dbSyncDataFiles::field_error_msg			=> ''
+					dbSyncDataFiles::field_file_date		=> '0000-00-00 00:00:00',
+					dbSyncDataFiles::field_file_name		=> $table.'.sql',
+					dbSyncDataFiles::field_file_path		=> '',
+					dbSyncDataFiles::field_file_type		=> dbSyncDataFiles::file_type_mysql,
+					dbSyncDataFiles::field_file_size		=> 0,
+					dbSyncDataFiles::field_status			=> dbSyncDataFiles::status_ok,
+					dbSyncDataFiles::field_error_msg		=> ''
 				);
 			}
 			elseif (!in_array($table, $archived_tables)) {
@@ -2213,32 +2213,32 @@ class syncDataInterface {
 				if (0 == ($list = $zip->add($this->temp_path.'sql/'.$table.'.sql', PCLZIP_OPT_ADD_PATH, 'sql', PCLZIP_OPT_REMOVE_PATH, $this->temp_path.'sql/'))) {
 					// Fehler beim Hinzufuegen der Datei
 					$data = array(
-						dbSyncDataFiles::field_action					=> dbSyncDataFiles::action_add,
-						dbSyncDataFiles::field_archive_id			=> $job[dbSyncDataJobs::field_archive_id],
+						dbSyncDataFiles::field_action			=> dbSyncDataFiles::action_add,
+						dbSyncDataFiles::field_archive_id		=> $job[dbSyncDataJobs::field_archive_id],
 						dbSyncDataFiles::field_archive_number	=> $job[dbSyncDataJobs::field_archive_number],
 						dbSyncDataFiles::field_file_checksum	=> 0,
-						dbSyncDataFiles::field_file_date			=> '0000-00-00 00:00:00',
-						dbSyncDataFiles::field_file_name			=> $table.'.sql',
-						dbSyncDataFiles::field_file_path			=> '',
-						dbSyncDataFiles::field_file_type			=> dbSyncDataFiles::file_type_mysql,
-						dbSyncDataFiles::field_file_size			=> 0,
-						dbSyncDataFiles::field_status					=> dbSyncDataFiles::status_error,
-						dbSyncDataFiles::field_error_msg			=> $zip->errorInfo(true)
+						dbSyncDataFiles::field_file_date		=> '0000-00-00 00:00:00',
+						dbSyncDataFiles::field_file_name		=> $table.'.sql',
+						dbSyncDataFiles::field_file_path		=> '',
+						dbSyncDataFiles::field_file_type		=> dbSyncDataFiles::file_type_mysql,
+						dbSyncDataFiles::field_file_size		=> 0,
+						dbSyncDataFiles::field_status			=> dbSyncDataFiles::status_error,
+						dbSyncDataFiles::field_error_msg		=> $zip->errorInfo(true)
 					);
 				}
 				else {
 					$data = array(
-						dbSyncDataFiles::field_action					=> dbSyncDataFiles::action_add,
-						dbSyncDataFiles::field_archive_id			=> $job[dbSyncDataJobs::field_archive_id],
+						dbSyncDataFiles::field_action			=> dbSyncDataFiles::action_add,
+						dbSyncDataFiles::field_archive_id		=> $job[dbSyncDataJobs::field_archive_id],
 						dbSyncDataFiles::field_archive_number	=> $job[dbSyncDataJobs::field_archive_number],
 						dbSyncDataFiles::field_file_checksum	=> dechex($list[0]['crc']),
-						dbSyncDataFiles::field_file_date			=> date('Y-m-d H:i:s', $list[0]['mtime']),
-						dbSyncDataFiles::field_file_name			=> $table.'.sql',
-						dbSyncDataFiles::field_file_path			=> '',
-						dbSyncDataFiles::field_file_type			=> dbSyncDataFiles::file_type_mysql,
-						dbSyncDataFiles::field_file_size			=> $list[0]['size'],
-						dbSyncDataFiles::field_status					=> dbSyncDataFiles::status_ok,
-						dbSyncDataFiles::field_error_msg			=> ''
+						dbSyncDataFiles::field_file_date		=> date('Y-m-d H:i:s', $list[0]['mtime']),
+						dbSyncDataFiles::field_file_name		=> $table.'.sql',
+						dbSyncDataFiles::field_file_path		=> '',
+						dbSyncDataFiles::field_file_type		=> dbSyncDataFiles::file_type_mysql,
+						dbSyncDataFiles::field_file_size		=> $list[0]['size'],
+						dbSyncDataFiles::field_status			=> dbSyncDataFiles::status_ok,
+						dbSyncDataFiles::field_error_msg		=> ''
 					);
 				}
 				if (!$dbSyncDataFile->sqlInsertRecord($data)) {
@@ -2265,32 +2265,32 @@ class syncDataInterface {
 					if (0 == ($list = $zip->add($this->temp_path.'sql/'.$table.'.sql', PCLZIP_OPT_ADD_PATH, 'sql', PCLZIP_OPT_REMOVE_PATH, $this->temp_path.'sql/'))) {
 						// Fehler beim Hinzufuegen der Datei
 						$data = array(
-							dbSyncDataFiles::field_action					=> dbSyncDataFiles::action_add,
-							dbSyncDataFiles::field_archive_id			=> $job[dbSyncDataJobs::field_archive_id],
+							dbSyncDataFiles::field_action			=> dbSyncDataFiles::action_add,
+							dbSyncDataFiles::field_archive_id		=> $job[dbSyncDataJobs::field_archive_id],
 							dbSyncDataFiles::field_archive_number	=> $job[dbSyncDataJobs::field_archive_number],
 							dbSyncDataFiles::field_file_checksum	=> 0,
-							dbSyncDataFiles::field_file_date			=> '0000-00-00 00:00:00',
-							dbSyncDataFiles::field_file_name			=> $table.'.sql',
-							dbSyncDataFiles::field_file_path			=> '',
-							dbSyncDataFiles::field_file_type			=> dbSyncDataFiles::file_type_mysql,
-							dbSyncDataFiles::field_file_size			=> 0,
-							dbSyncDataFiles::field_status					=> dbSyncDataFiles::status_error,
-							dbSyncDataFiles::field_error_msg			=> $zip->errorInfo(true)
+							dbSyncDataFiles::field_file_date		=> '0000-00-00 00:00:00',
+							dbSyncDataFiles::field_file_name		=> $table.'.sql',
+							dbSyncDataFiles::field_file_path		=> '',
+							dbSyncDataFiles::field_file_type		=> dbSyncDataFiles::file_type_mysql,
+							dbSyncDataFiles::field_file_size		=> 0,
+							dbSyncDataFiles::field_status			=> dbSyncDataFiles::status_error,
+							dbSyncDataFiles::field_error_msg		=> $zip->errorInfo(true)
 						);
 					}
 					else {
 						$data = array(
-							dbSyncDataFiles::field_action					=> dbSyncDataFiles::action_replace,
-							dbSyncDataFiles::field_archive_id			=> $job[dbSyncDataJobs::field_archive_id],
+							dbSyncDataFiles::field_action			=> dbSyncDataFiles::action_replace,
+							dbSyncDataFiles::field_archive_id		=> $job[dbSyncDataJobs::field_archive_id],
 							dbSyncDataFiles::field_archive_number	=> $job[dbSyncDataJobs::field_archive_number],
 							dbSyncDataFiles::field_file_checksum	=> dechex($list[0]['crc']),
-							dbSyncDataFiles::field_file_date			=> date('Y-m-d H:i:s', $list[0]['mtime']),
-							dbSyncDataFiles::field_file_name			=> $table.'.sql',
-							dbSyncDataFiles::field_file_path			=> '',
-							dbSyncDataFiles::field_file_type			=> dbSyncDataFiles::file_type_mysql,
-							dbSyncDataFiles::field_file_size			=> $list[0]['size'],
-							dbSyncDataFiles::field_status					=> dbSyncDataFiles::status_ok,
-							dbSyncDataFiles::field_error_msg			=> ''
+							dbSyncDataFiles::field_file_date		=> date('Y-m-d H:i:s', $list[0]['mtime']),
+							dbSyncDataFiles::field_file_name		=> $table.'.sql',
+							dbSyncDataFiles::field_file_path		=> '',
+							dbSyncDataFiles::field_file_type		=> dbSyncDataFiles::file_type_mysql,
+							dbSyncDataFiles::field_file_size		=> $list[0]['size'],
+							dbSyncDataFiles::field_status			=> dbSyncDataFiles::status_ok,
+							dbSyncDataFiles::field_error_msg		=> ''
 						);
 					}
 					if (!$dbSyncDataFile->sqlInsertRecord($data)) {
@@ -2317,11 +2317,11 @@ class syncDataInterface {
 		global $dbSyncDataJob;
 		
 		$data = array(
-			dbSyncDataJobs::field_status				=> dbSyncDataJobs::status_time_out,
+			dbSyncDataJobs::field_status		=> dbSyncDataJobs::status_time_out,
 			dbSyncDataJobs::field_last_message	=> 'TIME_OUT',
-			dbSyncDataJobs::field_total_time		=> (microtime(true) - $this->getScriptStart())+$old_total_time,
-			dbSyncDataJobs::field_next_action		=> ($process_files) ? dbSyncDataJobs::next_action_file : dbSyncDataJobs::next_action_mysql,
-			dbSyncDataJobs::field_next_file			=> $this->next_file
+			dbSyncDataJobs::field_total_time	=> (microtime(true) - $this->getScriptStart())+$old_total_time,
+			dbSyncDataJobs::field_next_action	=> ($process_files) ? dbSyncDataJobs::next_action_file : dbSyncDataJobs::next_action_mysql,
+			dbSyncDataJobs::field_next_file		=> $this->next_file
 		);
 		$where = array(
 			dbSyncDataJobs::field_id	=> $job_id
@@ -2410,17 +2410,17 @@ class syncDataInterface {
 				if (!in_array(LEPTON_PATH.$check[dbSyncDataFiles::field_file_path], $files)) {
 					// file is deleted
 					$data = array(
-						dbSyncDataFiles::field_action					=> dbSyncDataFiles::action_delete,
-						dbSyncDataFiles::field_archive_id			=> $job[dbSyncDataJobs::field_archive_id],
+						dbSyncDataFiles::field_action			=> dbSyncDataFiles::action_delete,
+						dbSyncDataFiles::field_archive_id		=> $job[dbSyncDataJobs::field_archive_id],
 						dbSyncDataFiles::field_archive_number	=> $job[dbSyncDataJobs::field_archive_number],
-						dbSyncDataFiles::field_error_msg			=> '',
+						dbSyncDataFiles::field_error_msg		=> '',
 						dbSyncDataFiles::field_file_checksum	=> $check[dbSyncDataFiles::field_file_checksum],
-						dbSyncDataFiles::field_file_date			=> $check[dbSyncDataFiles::field_file_date],
-						dbSyncDataFiles::field_file_name			=> $check[dbSyncDataFiles::field_file_name],
-						dbSyncDataFiles::field_file_path			=> $check[dbSyncDataFiles::field_file_path],
-						dbSyncDataFiles::field_file_size			=> $check[dbSyncDataFiles::field_file_size],
-						dbSyncDataFiles::field_file_type			=> dbSyncDataFiles::file_type_file,
-						dbSyncDataFiles::field_status					=> dbSyncDataFiles::status_ok
+						dbSyncDataFiles::field_file_date		=> $check[dbSyncDataFiles::field_file_date],
+						dbSyncDataFiles::field_file_name		=> $check[dbSyncDataFiles::field_file_name],
+						dbSyncDataFiles::field_file_path		=> $check[dbSyncDataFiles::field_file_path],
+						dbSyncDataFiles::field_file_size		=> $check[dbSyncDataFiles::field_file_size],
+						dbSyncDataFiles::field_file_type		=> dbSyncDataFiles::file_type_file,
+						dbSyncDataFiles::field_status			=> dbSyncDataFiles::status_ok
 					);
 					if (!$dbSyncDataFile->sqlInsertRecord($data)) {
 						$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbSyncDataFile->getError()));
@@ -2480,32 +2480,32 @@ class syncDataInterface {
 	      if (0 == ($list = $zip->add($file, PCLZIP_OPT_ADD_PATH, 'files', PCLZIP_OPT_REMOVE_PATH, LEPTON_PATH))) {
 					// Fehler beim Hinzufuegen der Datei
 					$data = array(
-						dbSyncDataFiles::field_action					=> $action,
-						dbSyncDataFiles::field_archive_id			=> $job[dbSyncDataJobs::field_archive_id],
+						dbSyncDataFiles::field_action			=> $action,
+						dbSyncDataFiles::field_archive_id		=> $job[dbSyncDataJobs::field_archive_id],
 						dbSyncDataFiles::field_archive_number	=> $job[dbSyncDataJobs::field_archive_number],
 						dbSyncDataFiles::field_file_checksum	=> 0,
-						dbSyncDataFiles::field_file_date			=> '0000-00-00 00:00:00',
-						dbSyncDataFiles::field_file_name			=> basename($file),
-						dbSyncDataFiles::field_file_path			=> str_replace(LEPTON_PATH, '', $file),
-						dbSyncDataFiles::field_file_type			=> dbSyncDataFiles::file_type_file,
-						dbSyncDataFiles::field_file_size			=> 0,
-						dbSyncDataFiles::field_status					=> dbSyncDataFiles::status_error,
-						dbSyncDataFiles::field_error_msg			=> $zip->errorInfo(true)
+						dbSyncDataFiles::field_file_date		=> '0000-00-00 00:00:00',
+						dbSyncDataFiles::field_file_name		=> basename($file),
+						dbSyncDataFiles::field_file_path		=> str_replace(LEPTON_PATH, '', $file),
+						dbSyncDataFiles::field_file_type		=> dbSyncDataFiles::file_type_file,
+						dbSyncDataFiles::field_file_size		=> 0,
+						dbSyncDataFiles::field_status			=> dbSyncDataFiles::status_error,
+						dbSyncDataFiles::field_error_msg		=> $zip->errorInfo(true)
 					); 
 				}
 				else {
 					$data = array(
-						dbSyncDataFiles::field_action					=> $action,
-						dbSyncDataFiles::field_archive_id			=> $job[dbSyncDataJobs::field_archive_id],
+						dbSyncDataFiles::field_action			=> $action,
+						dbSyncDataFiles::field_archive_id		=> $job[dbSyncDataJobs::field_archive_id],
 						dbSyncDataFiles::field_archive_number	=> $job[dbSyncDataJobs::field_archive_number],
 						dbSyncDataFiles::field_file_checksum	=> dechex($list[0]['crc']),
-						dbSyncDataFiles::field_file_date			=> date('Y-m-d H:i:s', $list[0]['mtime']),
-						dbSyncDataFiles::field_file_name			=> basename($file),
-						dbSyncDataFiles::field_file_path			=> str_replace(LEPTON_PATH, '', $file),
-						dbSyncDataFiles::field_file_type			=> dbSyncDataFiles::file_type_file,
-						dbSyncDataFiles::field_file_size			=> $list[0]['size'],
-						dbSyncDataFiles::field_status					=> dbSyncDataFiles::status_ok,
-						dbSyncDataFiles::field_error_msg			=> ''
+						dbSyncDataFiles::field_file_date		=> date('Y-m-d H:i:s', $list[0]['mtime']),
+						dbSyncDataFiles::field_file_name		=> basename($file),
+						dbSyncDataFiles::field_file_path		=> str_replace(LEPTON_PATH, '', $file),
+						dbSyncDataFiles::field_file_type		=> dbSyncDataFiles::file_type_file,
+						dbSyncDataFiles::field_file_size		=> $list[0]['size'],
+						dbSyncDataFiles::field_status			=> dbSyncDataFiles::status_ok,
+						dbSyncDataFiles::field_error_msg		=> ''
 					);
 				}
 				if (!$dbSyncDataFile->sqlInsertRecord($data)) {

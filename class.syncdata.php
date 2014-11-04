@@ -35,57 +35,57 @@ require_once LEPTON_PATH.'/modules/'.basename(dirname(__FILE__)).'/include/dbcon
 
 class dbSyncDataCfg extends dbConnectLE {
 	
-	const field_id						= 'cfg_id';
-	const field_name					= 'cfg_name';
-	const field_type					= 'cfg_type';
-	const field_value					= 'cfg_value';
-	const field_label					= 'cfg_label';
-	const field_description		= 'cfg_desc';
-	const field_status				= 'cfg_status';
-	const field_update_by			= 'cfg_update_by';
-	const field_update_when		= 'cfg_update_when';
+	const field_id			= 'cfg_id';
+	const field_name		= 'cfg_name';
+	const field_type		= 'cfg_type';
+	const field_value		= 'cfg_value';
+	const field_label		= 'cfg_label';
+	const field_description	= 'cfg_desc';
+	const field_status		= 'cfg_status';
+	const field_update_by	= 'cfg_update_by';
+	const field_update_when	= 'cfg_update_when';
 	
-	const status_active				= 1;
-	const status_deleted			= 0;
+	const status_active		= 1;
+	const status_deleted	= 0;
 	
-	const type_undefined			= 0;
-	const type_array					= 7;
-  const type_boolean				= 1;
-  const type_email					= 2;
-  const type_float					= 3;
-  const type_integer				= 4;
-  const type_list						= 9;
-  const type_path						= 5;
-  const type_string					= 6;
-  const type_url						= 8;
+	const type_undefined	= 0;
+	const type_array		= 7;
+  const type_boolean		= 1;
+  const type_email			= 2;
+  const type_float			= 3;
+  const type_integer		= 4;
+  const type_list			= 9;
+  const type_path			= 5;
+  const type_string			= 6;
+  const type_url			= 8;
   
   public $type_array = array(
-  	self::type_undefined		=> '-UNDEFINED-',
-  	self::type_array				=> 'ARRAY',
-  	self::type_boolean			=> 'BOOLEAN',
-  	self::type_email				=> 'E-MAIL',
-  	self::type_float				=> 'FLOAT',
-  	self::type_integer			=> 'INTEGER',
-  	self::type_list					=> 'LIST',
-  	self::type_path					=> 'PATH',
-  	self::type_string				=> 'STRING',
-  	self::type_url					=> 'URL'
+  	self::type_undefined	=> '-UNDEFINED-',
+  	self::type_array		=> 'ARRAY',
+  	self::type_boolean		=> 'BOOLEAN',
+  	self::type_email		=> 'E-MAIL',
+  	self::type_float		=> 'FLOAT',
+  	self::type_integer		=> 'INTEGER',
+  	self::type_list			=> 'LIST',
+  	self::type_path			=> 'PATH',
+  	self::type_string		=> 'STRING',
+  	self::type_url			=> 'URL'
   );
   
-  private $createTables 		= false;
-  private $message					= '';
+  private $createTables 	= false;
+  private $message			= '';
 
-  const cfgIgnoreDirectories		= 'cfgIgnoreDirectories';	
-  const cfgMaxExecutionTime			= 'cfgMaxExecutionTime';
-  const cfgLimitExecutionTime		=	'cfgLimitExecutionTime'; 
-  const cfgMemoryLimit					= 'cfgMemoryLimit';
-  const cfgIgnoreTables					= 'cfgIgnoreTables';
+  const cfgIgnoreDirectories	= 'cfgIgnoreDirectories';	
+  const cfgMaxExecutionTime		= 'cfgMaxExecutionTime';
+  const cfgLimitExecutionTime	=	'cfgLimitExecutionTime'; 
+  const cfgMemoryLimit			= 'cfgMemoryLimit';
+  const cfgIgnoreTables			= 'cfgIgnoreTables';
   const cfgIgnoreFileExtensions	= 'cfgIgnoreFileExtensions';
   const cfgFileMTimeDiffAllowed	= 'cfgFileMTimeDiffAllowed';
-  const cfgAutoExecMSec					= 'cfgAutoExecMSec';
-  const cfgServerActive					= 'cfgServerActive';
-  const cfgServerArchiveID			= 'cfgServerArchiveID';
-  const cfgServerURL						= 'cfgServerURL';
+  const cfgAutoExecMSec			= 'cfgAutoExecMSec';
+  const cfgServerActive			= 'cfgServerActive';
+  const cfgServerArchiveID		= 'cfgServerArchiveID';
+  const cfgServerURL			= 'cfgServerURL';
   
   public $config_array = array(
   	array('sync_label_cfg_max_execution_time', self::cfgMaxExecutionTime, self::type_integer, '30', 'sync_desc_cfg_max_execution_time'),
@@ -219,7 +219,6 @@ class dbSyncDataCfg extends dbConnectLE {
 	 * @return BOOL
 	 */
 	public function validateEMail($email) {
-		//if(eregi("^([0-9a-zA-Z]+[-._+&])*[0-9a-zA-Z]+@([-0-9a-zA-Z]+[.])+[a-zA-Z]{2,6}$", $email)) {
 		// PHP 5.3 compatibility - eregi is deprecated
 		if(preg_match("/^([0-9a-zA-Z]+[-._+&])*[0-9a-zA-Z]+@([-0-9a-zA-Z]+[.])+[a-zA-Z]{2,6}$/i", $email)) {
 			return true; }
@@ -392,60 +391,60 @@ class dbSyncDataCfg extends dbConnectLE {
 
 class dbSyncDataJobs extends dbConnectLE {
 	
-	const field_id										= 'job_id';
-	const field_start									= 'job_start';
-	const field_end										= 'job_end';
-	const field_total_time						= 'job_total_time'; // Sekunden, FLOAT
-	const field_type									= 'job_type';
-	const field_status								= 'job_status';
-	const field_errors								= 'job_errors';
-	const field_last_error						= 'job_last_error';
-	const field_last_message					= 'job_last_message';
-	const field_next_action						= 'job_next_action';
-	const field_next_file							= 'job_next_file';
-	const field_archive_id						= 'job_archive_id';
-	const field_archive_number				= 'job_archive_number';
-	const field_archive_file					= 'job_archive_file';
-	const field_restore_mode					= 'job_restore_mode';
-	const field_replace_LEPTON_URL				= 'job_replace_LEPTON_URL';
+	const field_id						= 'job_id';
+	const field_start					= 'job_start';
+	const field_end						= 'job_end';
+	const field_total_time				= 'job_total_time'; // Sekunden, FLOAT
+	const field_type					= 'job_type';
+	const field_status					= 'job_status';
+	const field_errors					= 'job_errors';
+	const field_last_error				= 'job_last_error';
+	const field_last_message			= 'job_last_message';
+	const field_next_action				= 'job_next_action';
+	const field_next_file				= 'job_next_file';
+	const field_archive_id				= 'job_archive_id';
+	const field_archive_number			= 'job_archive_number';
+	const field_archive_file			= 'job_archive_file';
+	const field_restore_mode			= 'job_restore_mode';
+	const field_replace_LEPTON_URL		= 'job_replace_LEPTON_URL';
 	const field_replace_table_prefix	= 'job_replace_table_prefix';
-	const field_ignore_htaccess				= 'job_ignore_htaccess';
-	const field_ignore_config					= 'job_ignore_config';
-	const field_delete_tables					= 'job_delete_tables';
-	const field_delete_files					= 'job_delete_files';
-	const field_timestamp							= 'job_timestamp';
+	const field_ignore_htaccess			= 'job_ignore_htaccess';
+	const field_ignore_config			= 'job_ignore_config';
+	const field_delete_tables			= 'job_delete_tables';
+	const field_delete_files			= 'job_delete_files';
+	const field_timestamp				= 'job_timestamp';
 	
-	const type_undefined				= 1;
+	const type_undefined		= 1;
 	const type_backup_complete	= 2;
-	const type_backup_mysql			= 4;
-	const type_backup_files			= 8;
+	const type_backup_mysql		= 4;
+	const type_backup_files		= 8;
 	const type_restore_complete	= 16;
-	const type_restore_mysql		= 32;
-	const type_restore_files		= 64;
+	const type_restore_mysql	= 32;
+	const type_restore_files	= 64;
 	
-	const mode_replace_all				= 1;
+	const mode_replace_all			= 1;
 	const mode_changed_date_size	= 2;
-	const mode_changed_binary			= 4;
+	const mode_changed_binary		= 4;
 	
 	public $job_type_array = array(
-		self::type_backup_complete => sync_type_complete,
-		self::type_backup_mysql => sync_type_mysql,
-		self::type_backup_files => sync_type_files,
+		self::type_backup_complete	=> sync_type_complete,
+		self::type_backup_mysql 	=> sync_type_mysql,
+		self::type_backup_files		=> sync_type_files,
 	);
 	
 	
-	const status_undefined		= 1;
-	const status_start				= 2;
-	const status_running			= 4;
-	const status_aborted			= 8;
-	const status_finished			= 16;
-	const status_time_out			= 32;
+	const status_undefined	= 1;
+	const status_start		= 2;
+	const status_running	= 4;
+	const status_aborted	= 8;
+	const status_finished	= 16;
+	const status_time_out	= 32;
 	
-	const next_action_none		= 1;
-	const next_action_mysql		= 2;
-	const next_action_file		= 4;
+	const next_action_none	= 1;
+	const next_action_mysql	= 2;
+	const next_action_file	= 4;
 	
-	private $createTables 		= false;
+	private $createTables 	= false;
 	
 	public function __construct($createTables = false) {
   	$this->createTables = $createTables;
@@ -491,39 +490,39 @@ class dbSyncDataJobs extends dbConnectLE {
 
 class dbSyncDataArchives extends dbConnectLE {
 	
-	const field_id							= 'id';
-	const field_archive_id			= 'archive_id';
+	const field_id				= 'id';
+	const field_archive_id		= 'archive_id';
 	const field_archive_number	= 'archive_number';
-	const field_archive_date		= 'archive_date';
-	const field_archive_name		= 'archive_name';
-	const field_archive_type		= 'archive_type';
-	const field_backup_type			= 'backup_type';
-	const field_status					= 'status';
-	const field_timestamp				= 'timestamp';
+	const field_archive_date	= 'archive_date';
+	const field_archive_name	= 'archive_name';
+	const field_archive_type	= 'archive_type';
+	const field_backup_type		= 'backup_type';
+	const field_status			= 'status';
+	const field_timestamp		= 'timestamp';
 	
-	const archive_type_backup		= 1;
-	const archive_type_update		= 2;
+	const archive_type_backup	= 1;
+	const archive_type_update	= 2;
 	
 	const backup_type_complete	= 1;
-	const backup_type_mysql			= 2;
-	const backup_type_files			= 4;
+	const backup_type_mysql		= 2;
+	const backup_type_files		= 4;
 	
 	public $backup_type_array = array(
-		array('key' => self::backup_type_complete, 	'value' => sync_type_complete),
+		array('key' => self::backup_type_complete, 		'value' => sync_type_complete),
 		array('key' => self::backup_type_mysql,			'value' => sync_type_mysql),
 		array('key' => self::backup_type_files,			'value' => sync_type_files)
 	);
 	
 	public $backup_type_array_text = array(
-		self::backup_type_complete => sync_type_complete,
-		self::backup_type_mysql => sync_type_mysql,
-		self::backup_type_files => sync_type_files,
+		self::backup_type_complete	=> sync_type_complete,
+		self::backup_type_mysql 	=> sync_type_mysql,
+		self::backup_type_files		=> sync_type_files,
 	);
 	
-	const status_active					= 1;
-	const status_deleted				= 2;
+	const status_active		= 1;
+	const status_deleted	= 2;
 	
-	private $createTables 		= false;
+	private $createTables 	= false;
 	
 	public function __construct($createTables = false) {
   	$this->createTables = $createTables;
@@ -553,31 +552,31 @@ class dbSyncDataArchives extends dbConnectLE {
 
 class dbSyncDataFiles extends dbConnectLE {
 	
-	const field_id							= 'id';
-	const field_archive_id			= 'archive_id';
+	const field_id				= 'id';
+	const field_archive_id		= 'archive_id';
 	const field_archive_number	= 'archive_number';
-	const field_file_type				= 'file_type';
-	const field_file_path				= 'file_path';
-	const field_file_name				= 'file_name';
-	const field_file_checksum		= 'file_checksum';
-	const field_file_date				= 'file_date';
-	const field_file_size				= 'file_size';
-	const field_action					= 'action';
-	const field_status					= 'status';
-	const field_error_msg				= 'error_message';
-	const field_timestamp				= 'timestamp';
+	const field_file_type		= 'file_type';
+	const field_file_path		= 'file_path';
+	const field_file_name		= 'file_name';
+	const field_file_checksum	= 'file_checksum';
+	const field_file_date		= 'file_date';
+	const field_file_size		= 'file_size';
+	const field_action			= 'action';
+	const field_status			= 'status';
+	const field_error_msg		= 'error_message';
+	const field_timestamp		= 'timestamp';
 	
-	const file_type_mysql				= 1;
-	const file_type_file				= 2;
-	const file_type_unknown			= 4;
+	const file_type_mysql		= 1;
+	const file_type_file		= 2;
+	const file_type_unknown		= 4;
 	
-	const action_add						= 1;
-	const action_replace				= 2;
-	const action_delete					= 4;
-	const action_ignore					= 8;
+	const action_add			= 1;
+	const action_replace		= 2;
+	const action_delete			= 4;
+	const action_ignore			= 8;
 	
-	const status_ok							= 1;
-	const status_error					= 2;
+	const status_ok				= 1;
+	const status_error			= 2;
 	
 	private $createTables 		= false;
 	
@@ -614,30 +613,30 @@ class dbSyncDataFiles extends dbConnectLE {
 
 class dbSyncDataProtocol extends dbConnectLE {
 	
-	const field_id							= 'id';
-	const field_archive_id			= 'archive_id';
+	const field_id				= 'id';
+	const field_archive_id		= 'archive_id';
 	const field_archive_number	= 'archive_number';
-	const field_job_id					= 'job_id';
-	const field_text						= 'text';
-	const field_file						= 'file';
-	const field_size						= 'size';
-	const field_action					= 'action';
-	const field_status					= 'status';
-	const field_timestamp				= 'timestamp';
+	const field_job_id			= 'job_id';
+	const field_text			= 'text';
+	const field_file			= 'file';
+	const field_size			= 'size';
+	const field_action			= 'action';
+	const field_status			= 'status';
+	const field_timestamp		= 'timestamp';
 	
-	const status_ok							= 1;
-	const status_error					= 2;
+	const status_ok				= 1;
+	const status_error			= 2;
 	
-	const action_file_add				= 16;
-	const action_file_compare		= 128;
-	const action_file_delete		= 8;
-	const action_file_ignore		= 512;
-	const action_file_replace		= 2;
-	const action_mysql_add			= 32;
-	const action_mysql_delete		= 4;
+	const action_file_add		= 16;
+	const action_file_compare	= 128;
+	const action_file_delete	= 8;
+	const action_file_ignore	= 512;
+	const action_file_replace	= 2;
+	const action_mysql_add		= 32;
+	const action_mysql_delete	= 4;
 	const action_mysql_replace	= 1;
-	const action_mysql_ignore		= 256;
-	const action_unknown				= 64;
+	const action_mysql_ignore	= 256;
+	const action_unknown		= 64;
 	
 	private $createTables 		= false;
 	
@@ -687,14 +686,14 @@ class dbSyncDataProtocol extends dbConnectLE {
    */
   public function addEntry($archive_id, $archive_number, $job_id, $text, $file, $size, $action, $status) {
   	$data = array(
-  		self::field_archive_id			=> $archive_id,
+  		self::field_archive_id		=> $archive_id,
   		self::field_archive_number	=> $archive_number,
-  		self::field_job_id					=> $job_id,
-  		self::field_text						=> $text,
-  		self::field_file						=> $file,
-  		self::field_size						=> $size,
-  		self::field_action					=> $action,
-  		self::field_status					=> $status
+  		self::field_job_id			=> $job_id,
+  		self::field_text			=> $text,
+  		self::field_file			=> $file,
+  		self::field_size			=> $size,
+  		self::field_action			=> $action,
+  		self::field_status			=> $status
   	);
   	if (!$this->sqlInsertRecord($data)) {
   		$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $this->getError()));

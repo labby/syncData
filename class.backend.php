@@ -38,34 +38,21 @@ else {
 	require_once(LEPTON_PATH .'/modules/'.basename(dirname(__FILE__)).'/languages/' .LANGUAGE .'.php');
 }
 
-if (file_exists(LEPTON_PATH.'/modules/pclzip/pclzip.lib.php')) {
-  // LEPTON 1.x
-	require_once LEPTON_PATH.'/modules/pclzip/pclzip.lib.php';
-}
-elseif (file_exists(LEPTON_PATH.'/modules/lib_lepton/pclzip/pclzip.lib.php')) {
-  // LEPTON 2.x
+if (file_exists(LEPTON_PATH.'/modules/lib_lepton/pclzip/pclzip.lib.php')) {
 	require_once LEPTON_PATH.'/modules/lib_lepton/pclzip/pclzip.lib.php';
 }
-elseif (file_exists(LEPTON_PATH.'/include/pclzip/pclzip.lib.php')) {
-  // WebsiteBaker
-  require_once LEPTON_PATH.'/include/pclzip/pclzip.lib.php';
-}
+
 else {
 	trigger_error(sprintf("[ <b>%s</b> ] Unable to find pclzip!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
 }
+
 // set temporary directory for pclzip
 if (!defined('PCLZIP_TEMPORARY_DIR')) define('PCLZIP_TEMPORARY_DIR', LEPTON_PATH.'/temp/');
 
 if (!class_exists('Dwoo')) {
-	// try to load regular Dwoo
-	if (file_exists(LEPTON_PATH.'/modules/dwoo/include.php')) {
-		require_once LEPTON_PATH.'/modules/dwoo/include.php';
-	}
-	else {
 		// load Dwoo from include directory
 		require_once LEPTON_PATH.'/modules/'.basename(dirname(__FILE__)).'/include/dwoo/dwooAutoload.php';
 	}
-}
 
 $cache_path = LEPTON_PATH.'/temp/cache';
 if (!file_exists($cache_path)) mkdir($cache_path, 0777, true);
@@ -76,26 +63,15 @@ global $parser;
 if (!is_object($parser)) $parser = new Dwoo($compiled_path, $cache_path);
 
 if (!class_exists('dbconnectle')) {
-	// try to load regular dbConnect_LE
-	if (file_exists(LEPTON_PATH.'/modules/dbconnect_le/include.php')) {
-		require_once LEPTON_PATH.'/modules/dbconnect_le/include.php';
-	}
-	else {
 		// load dbConnect_LE from include directory
 		require_once LEPTON_PATH.'/modules/'.basename(dirname(__FILE__)).'/include/dbconnect_le/include.php';
 	}
-}
 
 if (!class_exists('kitToolsLibrary')) {
-	// try to load required kitTools
-	if (file_exists(LEPTON_PATH.'/modules/kit_tools/class.tools.php')) {
-		require_once LEPTON_PATH.'/modules/kit_tools/class.tools.php';
-	}
-	else {
 		// load embedded kitTools library
 		require_once LEPTON_PATH.'/modules/'.basename(dirname(__FILE__)).'/class.tools.php';
 	}
-}
+
 global $kitTools;
 if (!is_object($kitTools)) $kitTools = new kitToolsLibrary();
 
@@ -105,52 +81,52 @@ require_once LEPTON_PATH.'/modules/'.basename(dirname(__FILE__)).'/class.interfa
 
 class syncBackend {
 
-	const request_action							= 'act';
+	const request_action				= 'act';
 	const request_file_backup_start		= 'bus';
-	const request_items								= 'its';
-	const request_backup							= 'bak';
-	const request_restore							= 'rst';
+	const request_items					= 'its';
+	const request_backup				= 'bak';
+	const request_restore				= 'rst';
 	const request_restore_continue		= 'rstc';
-	const request_restore_process			= 'rstp';
-	const request_restore_replace_url = 'rstru';
+	const request_restore_process		= 'rstp';
+	const request_restore_replace_url	= 'rstru';
 	const request_restore_replace_prefix = 'rstrp';
-	const request_restore_type				= 'rstt';
+	const request_restore_type			= 'rstt';
 
-	const action_about								= 'abt';
-	const action_config								= 'cfg';
-	const action_config_check					= 'cfgc';
-	const action_default							= 'def';
-	const action_backup								= 'back';
-	const action_backup_start					= 'baks';
-	const action_backup_start_new			= 'baksn';
-	const action_backup_continue			= 'bakc';
-	const action_process_backup				= 'pb';
-	const action_restore							= 'rst';
-	const action_restore_continue			= 'rstc';
-	const action_restore_info					= 'rsti';
-	const action_restore_start				= 'rsts';
-	const action_update_continue			= 'updc';
-	const action_update_start					= 'upds';
+	const action_about				= 'abt';
+	const action_config				= 'cfg';
+	const action_config_check		= 'cfgc';
+	const action_default			= 'def';
+	const action_backup				= 'back';
+	const action_backup_start		= 'baks';
+	const action_backup_start_new	= 'baksn';
+	const action_backup_continue	= 'bakc';
+	const action_process_backup		= 'pb';
+	const action_restore			= 'rst';
+	const action_restore_continue	= 'rstc';
+	const action_restore_info		= 'rsti';
+	const action_restore_start		= 'rsts';
+	const action_update_continue	= 'updc';
+	const action_update_start		= 'upds';
 
 	private $tab_navigation_array = array(
-		self::action_backup							=> sync_tab_backup,
-		self::action_restore						=> sync_tab_restore,
-		self::action_config							=> sync_tab_cfg,
-		self::action_about							=> sync_tab_about
+		self::action_backup		=> sync_tab_backup,
+		self::action_restore	=> sync_tab_restore,
+		self::action_config		=> sync_tab_cfg,
+		self::action_about		=> sync_tab_about
 	);
 
-	const add_max_rows								= 5;
+	const add_max_rows				= 5;
 
-	private $page_link 								= '';
-	private $img_url									= '';
-	private $template_path						= '';
-	private $error										= '';
-	private $message									= '';
-	private $temp_path								= '';
-	private $max_execution_time				= 30;
-	private $limit_execution_time			= 25;
-	private $memory_limit							= '256M';
-	private $next_file								= '';
+	private $page_link 				= '';
+	private $img_url				= '';
+	private $template_path			= '';
+	private $error					= '';
+	private $message				= '';
+	private $temp_path				= '';
+	private $max_execution_time		= 30;
+	private $limit_execution_time	= 25;
+	private $memory_limit			= '256M';
+	private $next_file				= '';
 
 	/**
 	 * Constructor
@@ -367,15 +343,15 @@ class syncBackend {
   	foreach ($this->tab_navigation_array as $key => $value) {
   		$navigation[] = array(
   			'active' 	=> ($key == $action) ? 1 : 0,
-  			'url'			=> sprintf('%s&%s=%s', $this->page_link, self::request_action, $key),
+  			'url'		=> sprintf('%s&%s=%s', $this->page_link, self::request_action, $key),
   			'text'		=> $value
   		);
   	}
   	$data = array(
-  		'LEPTON_URL'			=> LEPTON_URL,
+  		'LEPTON_URL'	=> LEPTON_URL,
   		'navigation'	=> $navigation,
-  		'error'				=> ($this->isError()) ? 1 : 0,
-  		'content'			=> ($this->isError()) ? $this->getError() : $content
+  		'error'			=> ($this->isError()) ? 1 : 0,
+  		'content'		=> ($this->isError()) ? $this->getError() : $content
   	);
   	echo $this->getTemplate('backend.body.lte', $data); echo $this->getError();
   } // show()
@@ -423,7 +399,7 @@ class syncBackend {
 		$count = array();
 		$header = array(
 			'identifier'	=> sync_header_cfg_identifier,
-			'value'				=> sync_header_cfg_value,
+			'value'			=> sync_header_cfg_value,
 			'description'	=> sync_header_cfg_description
 		);
 
@@ -439,12 +415,12 @@ class syncBackend {
 				$is_value = $value;
 				$value = array();
 				$value[] = array(
-					'value'			=> '',
+					'value'		=> '',
 					'selected'	=> ($is_value == '') ? 1 : 0,
-					'text'			=> '- select -'
+					'text'		=> '- select -'
 				);
 				$where = array(
-					dbSyncDataArchives::field_status					=> dbSyncDataArchives::status_active,
+					dbSyncDataArchives::field_status			=> dbSyncDataArchives::status_active,
 					dbSyncDataArchives::field_archive_number	=> 1
 				);
 				$archives = array();
@@ -454,9 +430,9 @@ class syncBackend {
 				}
 				foreach ($archives as $archive) {
 					$value[] = array(
-						'value'			=> $archive[dbSyncDataArchives::field_archive_id],
+						'value'		=> $archive[dbSyncDataArchives::field_archive_id],
 						'selected'	=> ($is_value == $archive[dbSyncDataArchives::field_archive_id]) ? 1 : 0,
-						'text'			=> sprintf('[ %s ] %s', $archive[dbSyncDataArchives::field_archive_id], $archive[dbSyncDataArchives::field_archive_name])
+						'text'		=> sprintf('[ %s ] %s', $archive[dbSyncDataArchives::field_archive_id], $archive[dbSyncDataArchives::field_archive_name])
 					);
 				}
 			}
@@ -464,30 +440,30 @@ class syncBackend {
 				$value = str_replace('"', '&quot;', stripslashes($value));
 			}
 			$items[] = array(
-				'id'					=> $id,
+				'id'			=> $id,
 				'identifier'	=> constant($entry[dbSyncDataCfg::field_label]),
-				'value'				=> $value,
-				'name'				=> sprintf('%s_%s', dbSyncDataCfg::field_value, $id),
+				'value'			=> $value,
+				'name'			=> sprintf('%s_%s', dbSyncDataCfg::field_value, $id),
 				'description'	=> constant($entry[dbSyncDataCfg::field_description]),
-				'type'				=> $dbSyncDataCfg->type_array[$entry[dbSyncDataCfg::field_type]],
-				'field'				=> $entry[dbSyncDataCfg::field_name]
+				'type'			=> $dbSyncDataCfg->type_array[$entry[dbSyncDataCfg::field_type]],
+				'field'			=> $entry[dbSyncDataCfg::field_name]
 			);
 		}
 		$data = array(
-			'form_name'						=> 'flex_table_cfg',
-			'form_action'					=> $this->page_link,
-			'action_name'					=> self::request_action,
-			'action_value'				=> self::action_config_check,
-			'items_name'					=> self::request_items,
-			'items_value'					=> implode(",", $count),
-			'head'								=> sync_header_cfg,
-			'intro'								=> $this->isMessage() ? $this->getMessage() : sprintf(sync_intro_cfg, 'syncData'),
-			'is_message'					=> $this->isMessage() ? 1 : 0,
-			'items'								=> $items,
-			'btn_ok'							=> sync_btn_ok,
-			'btn_abort'						=> sync_btn_abort,
-			'abort_location'			=> $this->page_link,
-			'header'							=> $header
+			'form_name'			=> 'flex_table_cfg',
+			'form_action'		=> $this->page_link,
+			'action_name'		=> self::request_action,
+			'action_value'		=> self::action_config_check,
+			'items_name'		=> self::request_items,
+			'items_value'		=> implode(",", $count),
+			'head'				=> sync_header_cfg,
+			'intro'				=> $this->isMessage() ? $this->getMessage() : sprintf(sync_intro_cfg, 'syncData'),
+			'is_message'		=> $this->isMessage() ? 1 : 0,
+			'items'				=> $items,
+			'btn_ok'			=> sync_btn_ok,
+			'btn_abort'			=> sync_btn_abort,
+			'abort_location'	=> $this->page_link,
+			'header'			=> $header
 		);
 		return $this->getTemplate('backend.config.lte', $data);
 	} // dlgConfig()
@@ -562,32 +538,33 @@ class syncBackend {
 		}
 		$select_array = array();
 		$select_array[] = array(
-			'value'			=> -1,
+			'value'		=> -1,
 			'selected'	=> 1,
-			'text'			=> sync_str_new_backup
+			'text'		=> sync_str_new_backup
 		);
 		foreach ($archives as $archive) {
 			$select_array[] = array(
-				'value'			=> $archive[dbSyncDataArchives::field_archive_id],
+				'value'		=> $archive[dbSyncDataArchives::field_archive_id],
 				'selected'	=> 0,
-				'text'			=> sprintf('%s - %s', date(sync_cfg_datetime_str, strtotime($archive[dbSyncDataArchives::field_archive_date])), $archive[dbSyncDataArchives::field_archive_name])
+				'text'		=> sprintf('%s - %s', date(sync_cfg_datetime_str, strtotime($archive[dbSyncDataArchives::field_archive_date])), $archive[dbSyncDataArchives::field_archive_name])
 			);
 		}
 
 		$data = array(
-			'form'			=> array(	'name'		=> 'backup_select',
-														'link'		=> $this->page_link,
-														'action'	=> array( 'name'	=> self::request_action,
-																								'value'	=> self::action_backup_start),
-														'btn'			=> array(	'ok'		=> sync_btn_ok)
-														),
-			'backup'		=> array(	'name'		=> self::request_backup,
-														'label'		=> sync_label_backup_select,
-														'hint'		=> sync_hint_backup_select,
-														'options'	=> $select_array),
-			'head'			=> sync_header_backup,
+			'form'		=> array(	'name'	=> 'backup_select',
+												'link'		=> $this->page_link,
+												'action'	=> array( 'name'	=> self::request_action,
+												'value'		=> self::action_backup_start),
+												'btn'		=> array(	'ok'	=> sync_btn_ok)
+								),
+			'backup'	=> array(	'name'	=> self::request_backup,
+												'label'		=> sync_label_backup_select,
+												'hint'		=> sync_hint_backup_select,
+												'options'	=> $select_array
+								),
+			'head'		=> sync_header_backup,
 			'is_intro'	=> $this->isMessage() ? 0 : 1,
-			'intro'			=> $this->isMessage() ? $this->getMessage() : sync_intro_backup
+			'intro'		=> $this->isMessage() ? $this->getMessage() : sync_intro_backup
 		);
 		return $this->getTemplate('backend.backup.select.lte', $data);
 	} // dlgBackup()
@@ -611,32 +588,34 @@ class syncBackend {
 			$select_array = array();
 			foreach ($dbSyncDataArchive->backup_type_array as $type) {
 				$select_array[] = array(
-					'value'			=> $type['key'],
-					'text'			=> $type['value'],
+					'value'		=> $type['key'],
+					'text'		=> $type['value'],
 					'selected'	=> ($type['key'] == dbSyncDataArchives::backup_type_complete) ? 1 : 0
-				);
+										);
 			}
-			$data = array(
-				'form'			=> array(	'name'		=> 'backup_start',
-															'link'		=> $this->page_link,
-															'action'	=> array( 'name'	=> self::request_action,
-																									'value'	=> self::action_backup_start_new),
-															'btn'			=> array(	'ok'		=> sync_btn_ok)
-															),
-				'backup_type' => array('name'		=> dbSyncDataArchives::field_backup_type,
-															'label'		=> sync_label_backup_type_select,
-															'hint'		=> sync_hint_backup_type_select,
-															'options'	=> $select_array),
-			  'archive_name' => array('name'	=> dbSyncDataArchives::field_archive_name,
-															'value'		=> '',
-															'label'		=> sync_label_archive_name,
-															'hint'		=> sync_hint_archive_name),
-				'head'			=> sync_header_backup_new,
-				'is_intro'	=> $this->isMessage() ? 0 : 1,
-				'intro'			=> $this->isMessage() ? $this->getMessage() : sync_intro_backup_new,
-				'text_process' 	=> sprintf(sync_msg_backup_running, $dbSyncDataCfg->getValue(dbSyncDataCfg::cfgLimitExecutionTime)),
-				'img_url'		=> $this->img_url
-			);
+				$data = array(
+					'form'		=> array(	'name'	=>	'backup_start',
+														'link'		=> $this->page_link,
+														'action'	=> array( 'name'	=> self::request_action,
+														'value'		=> self::action_backup_start_new),
+														'btn'		=> array(	'ok'		=> sync_btn_ok)
+										),
+					'backup_type'	=> array('name'	=> dbSyncDataArchives::field_backup_type,
+														'label'		=> sync_label_backup_type_select,
+														'hint'		=> sync_hint_backup_type_select,
+														'options'	=> $select_array),
+					'archive_name'	=> array('name'	=> dbSyncDataArchives::field_archive_name,
+														'value'		=> '',
+														'label'		=> sync_label_archive_name,
+														'hint'		=> sync_hint_archive_name
+											),
+					'head'			=> sync_header_backup_new,
+					'is_intro'		=> $this->isMessage() ? 0 : 1,
+					'intro'			=> $this->isMessage() ? $this->getMessage() : sync_intro_backup_new,
+					'text_process' 	=> sprintf(sync_msg_backup_running, $dbSyncDataCfg->getValue(dbSyncDataCfg::cfgLimitExecutionTime)),
+					'img_url'		=> $this->img_url
+							);
+							
 			return $this->getTemplate('backend.backup.new.lte', $data);
 		}
 		else {
@@ -681,34 +660,37 @@ class syncBackend {
 
 	  	$values = array(
 	  		array('label'	=> sync_label_archive_id, 		'text' => $archive[dbSyncDataArchives::field_archive_id]),
-	  		array('label'	=> sync_label_archive_number, 'text' => $archive[dbSyncDataArchives::field_archive_number]),
-	  		array('label' => sync_label_archive_type, 	'text' => $dbSyncDataArchive->backup_type_array_text[$archive[dbSyncDataArchives::field_archive_type]]),
-	  		array('label' => sync_label_total_files, 		'text' => $files['count']),
-	  		array('label' => sync_label_total_size, 		'text' => $kitTools->bytes2Str($files['bytes'])),
-	  		array('label' => sync_label_timestamp, 			'text' => date(sync_cfg_datetime_str, strtotime($archive[dbSyncDataArchives::field_timestamp])))
-	  	);
-	  	$info = array(
+	  		array('label'	=> sync_label_archive_number,	'text' => $archive[dbSyncDataArchives::field_archive_number]),
+	  		array('label'	=> sync_label_archive_type, 	'text' => $dbSyncDataArchive->backup_type_array_text[$archive[dbSyncDataArchives::field_archive_type]]),
+	  		array('label'	=> sync_label_total_files, 		'text' => $files['count']),
+	  		array('label'	=> sync_label_total_size, 		'text' => $kitTools->bytes2Str($files['bytes'])),
+	  		array('label'	=> sync_label_timestamp, 		'text' => date(sync_cfg_datetime_str, strtotime($archive[dbSyncDataArchives::field_timestamp])))
+					);
+					
+			$info = array(
 	  		'label'		=> sync_label_archive_info,
 	  		'values'	=> $values
-	  	);
+						);
 
 			$data = array(
-				'form'			=> array(	'name'		=> 'backup_update',
-															'link'		=> $this->page_link,
-															'action'	=> array( 'name'	=> self::request_action,
-																									'value'	=> self::action_update_start),
-															'archive'	=> array(	'name'	=> dbSyncDataArchives::field_archive_id,
-																									'value'	=> $archiv_id),
-															'btn'			=> array(	'ok'		=> sync_btn_ok,
-																									'abort'	=> sync_btn_abort)
-															),
+				'form'	=> array(	
+									'name'		=> 'backup_update',
+									'link'		=> $this->page_link,
+									'action'	=> array( 'name'	=> self::request_action,
+									'value'		=> self::action_update_start),
+									'archive'	=> array(	'name'	=> dbSyncDataArchives::field_archive_id,
+									'value'		=> $archiv_id),
+									'btn'		=> array(	'ok'		=> sync_btn_ok,
+									'abort'		=> sync_btn_abort)
+								),
 				'info'			=> $info,
-				'archive_name' => array('name'	=> dbSyncDataArchives::field_archive_name,
-															'value'		=> '',
-															'label'		=> sync_label_archive_name,
-															'hint'		=> sync_hint_archive_name),
+				'archive_name'	=> array(	'name'	=> dbSyncDataArchives::field_archive_name,
+											'value'		=> '',
+											'label'		=> sync_label_archive_name,
+											'hint'		=> sync_hint_archive_name
+										),							
 				'head'			=> sync_header_backup_update,
-				'is_intro'	=> $this->isMessage() ? 0 : 1,
+				'is_intro'		=> $this->isMessage() ? 0 : 1,
 				'intro'			=> $this->isMessage() ? $this->getMessage() : sync_intro_backup_update,
 				'text_process' 	=> sprintf(sync_msg_backup_running, $dbSyncDataCfg->getValue(dbSyncDataCfg::cfgLimitExecutionTime)),
 				'img_url'		=> $this->img_url
